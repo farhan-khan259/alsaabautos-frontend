@@ -1,0 +1,192 @@
+* {
+    box-sizing: border-box;
+}
+
+.addexpense-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: #f5f6fa;
+    overflow-x: hidden;
+}
+
+/* MAIN */
+.addexpense-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: margin 0.3s ease;
+}
+
+.addexpense-sidebar-open {
+    margin-left: 250px;
+}
+
+.addexpense-sidebar-closed {
+    margin-left: 80px;
+}
+
+/* HEADER */
+.addexpense-header {
+    height: 72px;
+    background: #ffffff;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.addexpense-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.addexpense-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 22px;
+}
+
+.addexpense-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.addexpense-icon-btn {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.addexpense-notification-btn {
+    position: relative;
+}
+
+.addexpense-notification-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #ff385c;
+    border-radius: 50%;
+}
+
+.addexpense-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* CONTENT */
+.addexpense-content {
+    padding: clamp(12px, 2vw, 30px);
+}
+
+.addexpense-form-container {
+    background: #ffffff;
+    max-width: 960px;
+    margin: auto;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* FORM HEADER */
+.addexpense-form-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.addexpense-form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.addexpense-save-btn {
+    background: #ff385c;
+    color: #ffffff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+}
+
+.addexpense-remove-btn {
+    background: #ffffff;
+    border: 1px solid #ff385c;
+    color: #ff385c;
+    padding: 8px 18px;
+    border-radius: 6px;
+}
+
+/* FORM */
+.addexpense-form {
+    padding: clamp(16px, 2vw, 30px);
+}
+
+.addexpense-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.addexpense-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.addexpense-field input,
+.addexpense-field select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+}
+
+/* ADD PAYER */
+.addexpense-add-payer {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed #d1d5db;
+    background: #f3f4f6;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* TITLE */
+.addexpense-page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .addexpense-menu-toggle {
+        display: block;
+    }
+
+    .addexpense-main {
+        margin-left: 0 !important;
+    }
+
+    .addexpense-user-info {
+        display: none;
+    }
+
+    .addexpense-grid {
+        grid-template-columns: 1fr;
+    }
+}

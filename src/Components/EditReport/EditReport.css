@@ -1,0 +1,541 @@
+/* Edit Report Wrapper and Layout */
+.editreport-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: #f5f6fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.editreport-main {
+    flex: 1;
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+}
+
+.editreport-main.editreport-sidebar-open {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+.editreport-main.editreport-sidebar-closed {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+}
+
+/* Header Styles */
+.editreport-header {
+    height: 72px;
+    background: #fff;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+}
+
+.editreport-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.editreport-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.editreport-menu-toggle:hover {
+    background: #f9fafb;
+}
+
+.editreport-page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.editreport-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.editreport-icon-btn {
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s;
+}
+
+.editreport-icon-btn:hover {
+    background: #f9fafb;
+    color: #1a1a1a;
+}
+
+.editreport-notification-btn {
+    position: relative;
+}
+
+.editreport-notification-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #ff2d55;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.editreport-user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.editreport-user:hover {
+    background: #f1f5f9;
+}
+
+.editreport-user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.2;
+}
+
+.editreport-user-role {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.2;
+}
+
+/* Content Area */
+.editreport-content {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    min-height: calc(100vh - 72px);
+    background-color: #f9fafb;
+}
+
+/* Card Styles */
+.editreport-card {
+    max-width: 1000px;
+    background: #fff;
+    margin: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+/* Card Header */
+.editreport-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafb;
+}
+
+.editreport-card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.editreport-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.editreport-discard {
+    background: #fff;
+    border: 1px solid #ff2d55;
+    color: #ff2d55;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.editreport-discard:hover {
+    background: #fef2f2;
+    transform: translateY(-1px);
+}
+
+.editreport-save {
+    background: linear-gradient(135deg, #ff2d55, #e02449);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(255, 45, 85, 0.2);
+}
+
+.editreport-save:hover {
+    background: linear-gradient(135deg, #e02449, #c81e3d);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(255, 45, 85, 0.3);
+}
+
+/* Grid Layout */
+.editreport-grid {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.editreport-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.editreport-field-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+}
+
+.editreport-field-input,
+.editreport-field-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1f2937;
+    background: white;
+    transition: all 0.2s;
+}
+
+.editreport-field-input:focus,
+.editreport-field-select:focus {
+    outline: none;
+    border-color: #ff2d55;
+    box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.1);
+}
+
+/* Number input styling */
+.editreport-field-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.editreport-field-input[type="number"]::-webkit-outer-spin-button,
+.editreport-field-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Add Investor Button */
+.editreport-add-investor {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed #d1d5db;
+    background: #f3f4f6;
+    border-radius: 6px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.editreport-add-investor:hover {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.editreport-add-investor:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.editreport-add-investor:disabled:hover {
+    background: #f3f4f6;
+    color: #6b7280;
+    border-color: #d1d5db;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Tablets */
+@media (max-width: 992px) {
+    .editreport-content {
+        padding: 20px;
+    }
+
+    .editreport-grid {
+        gap: 16px;
+    }
+
+    .editreport-card-header {
+        padding: 16px 20px;
+    }
+}
+
+/* Mobile and small tablets */
+@media (max-width: 768px) {
+    .editreport-menu-toggle {
+        display: block;
+    }
+
+    .editreport-main.editreport-sidebar-open,
+    .editreport-main.editreport-sidebar-closed {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .editreport-header {
+        padding: 0 20px;
+        height: auto;
+        min-height: 72px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .editreport-page-title {
+        font-size: 24px;
+    }
+
+    .editreport-header-actions {
+        order: 2;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .editreport-user {
+        display: none;
+    }
+
+    .editreport-content {
+        padding: 16px;
+    }
+
+    .editreport-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .editreport-card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .editreport-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .editreport-save,
+    .editreport-discard {
+        flex: 1;
+    }
+
+    .editreport-add-investor {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 576px) {
+    .editreport-header {
+        padding: 0 16px;
+    }
+
+    .editreport-page-title {
+        font-size: 20px;
+    }
+
+    .editreport-icon-btn {
+        padding: 8px;
+        font-size: 18px;
+    }
+
+    .editreport-header-actions {
+        gap: 10px;
+    }
+
+    .editreport-content {
+        padding: 12px;
+    }
+
+    .editreport-card-header {
+        padding: 14px 16px;
+    }
+
+    .editreport-grid {
+        padding: 16px;
+    }
+
+    .editreport-card-title {
+        font-size: 18px;
+    }
+
+    .editreport-field-label {
+        font-size: 13px;
+    }
+
+    .editreport-field-input,
+    .editreport-field-select {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .editreport-save,
+    .editreport-discard {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 375px) {
+    .editreport-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .editreport-header-left {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .editreport-page-title {
+        font-size: 18px;
+    }
+
+    .editreport-content {
+        padding: 10px;
+    }
+
+    .editreport-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .editreport-save,
+    .editreport-discard {
+        width: 100%;
+    }
+}
+
+/* Landscape mode for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .editreport-header {
+        padding: 10px 20px;
+        height: 60px;
+    }
+
+    .editreport-content {
+        padding: 15px;
+    }
+
+    .editreport-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .editreport-actions {
+        flex-direction: row;
+    }
+
+    .editreport-save,
+    .editreport-discard {
+        flex: none;
+        width: auto;
+    }
+
+    .editreport-add-investor {
+        width: auto;
+    }
+}
+
+/* Form Validation Styles */
+.editreport-field-input:invalid:not(:focus):not(:placeholder-shown),
+.editreport-field-select:invalid:not(:focus) {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.editreport-field-input:valid:not(:placeholder-shown),
+.editreport-field-select:valid {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+/* Focus styles for accessibility */
+.editreport-field-input:focus-visible,
+.editreport-field-select:focus-visible,
+.editreport-save:focus-visible,
+.editreport-discard:focus-visible,
+.editreport-icon-btn:focus-visible,
+.editreport-add-investor:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Disabled state */
+.editreport-save:disabled,
+.editreport-discard:disabled,
+.editreport-add-investor:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Smooth transitions */
+.editreport-field-input,
+.editreport-field-select,
+.editreport-save,
+.editreport-discard,
+.editreport-icon-btn,
+.editreport-add-investor {
+    transition: all 0.2s ease;
+}

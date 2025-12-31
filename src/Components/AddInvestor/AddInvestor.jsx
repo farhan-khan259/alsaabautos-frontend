@@ -1,0 +1,249 @@
+"use client";
+
+import { useState } from "react";
+import { MdMenu, MdSearch, MdSettings, MdNotifications } from "react-icons/md";
+import Sidebar from "../Sidebar/Sidebar";
+import "./AddInvestor.css";
+
+const AddInvestor = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [formData, setFormData] = useState({
+    investorId: "",
+    investorName: "",
+    contactNo: "",
+    email: "",
+    joinDate: "",
+    status: "",
+    initialInvestment: "",
+    profitShare: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    // Add your form submission logic here
+  };
+
+  const handleReset = () => {
+    setFormData({
+      investorId: "",
+      investorName: "",
+      contactNo: "",
+      email: "",
+      joinDate: "",
+      status: "",
+      initialInvestment: "",
+      profitShare: "",
+    });
+  };
+
+  return (
+    <div className="addinvestor-wrapper">
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      <div
+        className={`addinvestor-main ${
+          sidebarOpen
+            ? "addinvestor-sidebar-open"
+            : "addinvestor-sidebar-closed"
+        }`}
+      >
+        {/* Header */}
+        <div className="addinvestor-header">
+          <div className="addinvestor-header-left">
+            <button
+              className="addinvestor-menu-toggle"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+            >
+              <MdMenu />
+            </button>
+            <h1 className="addinvestor-page-title">Add Investor</h1>
+          </div>
+
+          <div className="addinvestor-header-actions">
+            <button className="addinvestor-icon-btn" aria-label="Search">
+              <MdSearch />
+            </button>
+            <button className="addinvestor-icon-btn" aria-label="Settings">
+              <MdSettings />
+            </button>
+            <button
+              className="addinvestor-icon-btn addinvestor-notification-btn"
+              aria-label="Notifications"
+            >
+              <MdNotifications />
+              <span className="addinvestor-notification-dot"></span>
+            </button>
+            <div className="addinvestor-user-profile">
+              <div className="addinvestor-user-info">
+                <span className="addinvestor-user-name">Abram Schleifer</span>
+                <span className="addinvestor-user-role">Admin</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="addinvestor-page">
+          <div className="addinvestor-page-header">
+            <div className="addinvestor-breadcrumb-container">
+              <span className="addinvestor-breadcrumb">
+                Dashboard / Investors / Add Investor
+              </span>
+            </div>
+            <div className="addinvestor-page-actions">
+              <button
+                type="button"
+                className="addinvestor-btn addinvestor-btn-outline"
+                onClick={handleReset}
+              >
+                Remove
+              </button>
+              <button
+                type="submit"
+                className="addinvestor-btn addinvestor-btn-primary"
+                form="add-investor-form"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
+          <form id="add-investor-form" onSubmit={handleSubmit}>
+            <div className="addinvestor-card addinvestor-form-section">
+              <h3 className="addinvestor-section-title">Investor Details</h3>
+
+              <div className="addinvestor-form-grid">
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">Investor Id:</label>
+                  <input
+                    type="text"
+                    name="investorId"
+                    className="addinvestor-form-input"
+                    placeholder="Enter Id"
+                    value={formData.investorId}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">
+                    Investor Name
+                  </label>
+                  <input
+                    type="text"
+                    name="investorName"
+                    className="addinvestor-form-input"
+                    placeholder="Enter Name"
+                    value={formData.investorName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">Contact No:</label>
+                  <input
+                    type="tel"
+                    name="contactNo"
+                    className="addinvestor-form-input"
+                    placeholder="Enter Number"
+                    value={formData.contactNo}
+                    onChange={handleChange}
+                    required
+                    pattern="[0-9]{10,11}"
+                    title="Please enter a valid phone number (10-11 digits)"
+                  />
+                </div>
+
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">Email:</label>
+                  <input
+                    type="email"
+                    name="email"
+                    className="addinvestor-form-input"
+                    placeholder="Enter Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">Join Date:</label>
+                  <input
+                    type="date"
+                    name="joinDate"
+                    className="addinvestor-form-input"
+                    placeholder="DD/MM/YYYY"
+                    value={formData.joinDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">Status:</label>
+                  <select
+                    name="status"
+                    className="addinvestor-form-select"
+                    value={formData.status}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">In Active</option>
+                  </select>
+                </div>
+
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">
+                    Initial Investment:
+                  </label>
+                  <input
+                    type="number"
+                    name="initialInvestment"
+                    className="addinvestor-form-input"
+                    placeholder="Enter Investment"
+                    value={formData.initialInvestment}
+                    onChange={handleChange}
+                    required
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+
+                <div className="addinvestor-form-group">
+                  <label className="addinvestor-form-label">
+                    Profit Share%:
+                  </label>
+                  <input
+                    type="number"
+                    name="profitShare"
+                    className="addinvestor-form-input"
+                    placeholder="Enter Percentage"
+                    value={formData.profitShare}
+                    onChange={handleChange}
+                    required
+                    min="0"
+                    max="100"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddInvestor;

@@ -1,0 +1,1060 @@
+/* AddInvestor Wrapper */
+.addinvestor-wrapper {
+    min-height: 100vh;
+    background: #f5f6fa;
+    display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Main Content Area */
+.addinvestor-main {
+    flex: 1;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.addinvestor-main.addinvestor-sidebar-open {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+.addinvestor-main.addinvestor-sidebar-closed {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+}
+
+/* Header */
+.addinvestor-header {
+    background: white;
+    padding: 20px 30px;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.addinvestor-header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
+}
+
+.addinvestor-menu-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+    display: none;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.addinvestor-menu-toggle:hover {
+    background: #f9fafb;
+    color: #1a1a1a;
+}
+
+.addinvestor-menu-toggle:active {
+    transform: scale(0.95);
+}
+
+.addinvestor-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Header Actions */
+.addinvestor-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.addinvestor-icon-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 20px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.addinvestor-icon-btn:hover {
+    background: #f9fafb;
+    border-color: #ff385c;
+    color: #ff385c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.addinvestor-icon-btn:active {
+    transform: translateY(0);
+}
+
+.addinvestor-notification-btn {
+    position: relative;
+}
+
+.addinvestor-notification-dot {
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    width: 8px;
+    height: 8px;
+    background: #ff385c;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: addinvestor-pulse 2s infinite;
+}
+
+@keyframes addinvestor-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* User Profile */
+.addinvestor-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.addinvestor-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.addinvestor-user-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.addinvestor-user-role {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Main Page */
+.addinvestor-page {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    background-color: #f5f6fa;
+}
+
+.addinvestor-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+    animation: addinvestor-fade-in 0.6s ease-out;
+}
+
+@keyframes addinvestor-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.addinvestor-breadcrumb-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.addinvestor-breadcrumb {
+    font-size: 13px;
+    color: #9ca3af;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.addinvestor-page-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.addinvestor-btn {
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 120px;
+    height: 48px;
+}
+
+.addinvestor-btn-primary {
+    background: linear-gradient(135deg, #ff385c, #e31c4d);
+    color: white;
+    box-shadow: 0 2px 4px rgba(255, 56, 92, 0.2);
+}
+
+.addinvestor-btn-primary:hover {
+    background: linear-gradient(135deg, #e31c4d, #c81e3d);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 56, 92, 0.3);
+}
+
+.addinvestor-btn-primary:active {
+    transform: translateY(0);
+}
+
+.addinvestor-btn-outline {
+    background: white;
+    color: #ff385c;
+    border: 1px solid #ff385c;
+}
+
+.addinvestor-btn-outline:hover {
+    background: #fef2f2;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(255, 56, 92, 0.1);
+}
+
+.addinvestor-btn-outline:active {
+    transform: translateY(0);
+}
+
+/* Card */
+.addinvestor-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.addinvestor-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.addinvestor-form-section {
+    margin-bottom: 0;
+}
+
+.addinvestor-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+    letter-spacing: -0.025em;
+    position: relative;
+}
+
+.addinvestor-section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(135deg, #ff385c, #e31c4d);
+    border-radius: 1px;
+}
+
+/* Form Grid */
+.addinvestor-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.addinvestor-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.addinvestor-form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.01em;
+}
+
+.addinvestor-form-label::after {
+    content: "*";
+    color: #ff385c;
+    font-size: 1.2em;
+    margin-left: 2px;
+}
+
+.addinvestor-form-input,
+.addinvestor-form-select {
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    background: white;
+    color: #1f2937;
+    min-height: 48px;
+}
+
+.addinvestor-form-input:focus,
+.addinvestor-form-select:focus {
+    outline: none;
+    border-color: #ff385c;
+    box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.1);
+}
+
+.addinvestor-form-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.addinvestor-form-input[type="date"] {
+    color: #9ca3af;
+}
+
+.addinvestor-form-input[type="date"]:valid {
+    color: #1f2937;
+}
+
+.addinvestor-form-input[type="number"]::-webkit-inner-spin-button,
+.addinvestor-form-input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 24px;
+}
+
+/* Validation Styles */
+.addinvestor-form-input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.addinvestor-form-input:valid:not(:placeholder-shown) {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+.addinvestor-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Focus styles for accessibility */
+.addinvestor-form-input:focus-visible,
+.addinvestor-form-select:focus-visible,
+.addinvestor-btn:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Large Tablets and Small Desktops (1024px - 1200px) */
+@media (max-width: 1200px) {
+    .addinvestor-main.addinvestor-sidebar-open {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
+
+    .addinvestor-main.addinvestor-sidebar-closed {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+
+    .addinvestor-page {
+        padding: 25px;
+    }
+
+    .addinvestor-card {
+        padding: 28px;
+    }
+
+    .addinvestor-form-grid {
+        gap: 20px;
+    }
+}
+
+/* Tablets (768px - 992px) */
+@media (max-width: 992px) {
+    .addinvestor-main.addinvestor-sidebar-open {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .addinvestor-main.addinvestor-sidebar-closed {
+        margin-left: 60px;
+        width: calc(100% - 60px);
+    }
+
+    .addinvestor-header {
+        padding: 16px 20px;
+        min-height: 75px;
+    }
+
+    .addinvestor-page-title {
+        font-size: 24px;
+    }
+
+    .addinvestor-page {
+        padding: 20px;
+    }
+
+    .addinvestor-page-header {
+        margin-bottom: 25px;
+    }
+
+    .addinvestor-form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .addinvestor-card {
+        padding: 24px;
+        border-radius: 14px;
+    }
+
+    .addinvestor-section-title {
+        font-size: 1.125rem;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+    }
+
+    .addinvestor-btn {
+        padding: 11px 24px;
+        min-width: 110px;
+        height: 44px;
+    }
+
+    .addinvestor-user-name {
+        font-size: 14px;
+        max-width: 140px;
+    }
+}
+
+/* Mobile and Small Tablets (576px - 768px) */
+@media (max-width: 768px) {
+    .addinvestor-menu-toggle {
+        display: flex;
+    }
+
+    .addinvestor-main.addinvestor-sidebar-open,
+    .addinvestor-main.addinvestor-sidebar-closed {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .addinvestor-header {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+        min-height: auto;
+    }
+
+    .addinvestor-header-left {
+        width: 100%;
+        justify-content: space-between;
+        order: 1;
+    }
+
+    .addinvestor-page-title {
+        font-size: 22px;
+    }
+
+    .addinvestor-header-actions {
+        width: 100%;
+        justify-content: space-between;
+        order: 2;
+        padding-top: 8px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .addinvestor-user-profile {
+        order: -1;
+    }
+
+    .addinvestor-user-info {
+        align-items: flex-start;
+    }
+
+    .addinvestor-page {
+        padding: 16px;
+    }
+
+    .addinvestor-page-header {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .addinvestor-breadcrumb {
+        font-size: 12px;
+        text-align: center;
+        display: block;
+    }
+
+    .addinvestor-page-actions {
+        width: 100%;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .addinvestor-btn {
+        flex: 1;
+        min-width: 140px;
+        padding: 12px 20px;
+        font-size: 13px;
+        height: 44px;
+    }
+
+    .addinvestor-card {
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    .addinvestor-section-title {
+        font-size: 1.125rem;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+    }
+
+    .addinvestor-form-grid {
+        gap: 18px;
+    }
+
+    .addinvestor-form-input,
+    .addinvestor-form-select {
+        padding: 11px 14px;
+        font-size: 0.8125rem;
+        min-height: 44px;
+        border-radius: 8px;
+    }
+
+    .addinvestor-form-label {
+        font-size: 0.8125rem;
+    }
+}
+
+/* Small Mobile Devices (480px - 576px) */
+@media (max-width: 576px) {
+    .addinvestor-header {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .addinvestor-menu-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        padding: 6px;
+    }
+
+    .addinvestor-page-title {
+        font-size: 20px;
+    }
+
+    .addinvestor-header-actions {
+        gap: 10px;
+    }
+
+    .addinvestor-icon-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        padding: 8px;
+    }
+
+    .addinvestor-user-info {
+        flex: 1;
+        margin-left: 8px;
+    }
+
+    .addinvestor-user-name {
+        font-size: 13px;
+        max-width: none;
+    }
+
+    .addinvestor-user-role {
+        font-size: 11px;
+    }
+
+    .addinvestor-page {
+        padding: 14px;
+    }
+
+    .addinvestor-page-header {
+        margin-bottom: 20px;
+        gap: 14px;
+    }
+
+    .addinvestor-breadcrumb {
+        font-size: 11px;
+    }
+
+    .addinvestor-page-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .addinvestor-btn {
+        width: 100%;
+        min-width: auto;
+        padding: 12px;
+        font-size: 14px;
+        height: 46px;
+    }
+
+    .addinvestor-card {
+        padding: 18px;
+    }
+
+    .addinvestor-section-title {
+        font-size: 1rem;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+    }
+
+    .addinvestor-section-title::before {
+        width: 60px;
+    }
+
+    .addinvestor-form-grid {
+        gap: 16px;
+    }
+
+    .addinvestor-form-group {
+        gap: 6px;
+    }
+
+    .addinvestor-form-label {
+        font-size: 0.75rem;
+    }
+
+    .addinvestor-form-input,
+    .addinvestor-form-select {
+        padding: 10px 12px;
+        font-size: 0.75rem;
+        min-height: 42px;
+    }
+}
+
+/* Extra Small Mobile Devices (375px - 480px) */
+@media (max-width: 480px) {
+    .addinvestor-header {
+        padding: 10px 12px;
+    }
+
+    .addinvestor-menu-toggle {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+    }
+
+    .addinvestor-page-title {
+        font-size: 18px;
+    }
+
+    .addinvestor-header-actions {
+        justify-content: space-around;
+        gap: 8px;
+    }
+
+    .addinvestor-icon-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .addinvestor-user-info {
+        display: none;
+    }
+
+    .addinvestor-page {
+        padding: 12px;
+    }
+
+    .addinvestor-page-header {
+        margin-bottom: 18px;
+    }
+
+    .addinvestor-breadcrumb {
+        font-size: 10px;
+    }
+
+    .addinvestor-card {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    .addinvestor-section-title {
+        font-size: 0.9375rem;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+    }
+
+    .addinvestor-form-grid {
+        gap: 14px;
+    }
+
+    .addinvestor-form-input,
+    .addinvestor-form-select {
+        padding: 9px 10px;
+        font-size: 0.75rem;
+        min-height: 40px;
+        border-radius: 6px;
+    }
+}
+
+/* Very Small Mobile Devices (below 375px) */
+@media (max-width: 375px) {
+    .addinvestor-header {
+        padding: 8px 10px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .addinvestor-header-left {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .addinvestor-header-actions {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0;
+    }
+
+    .addinvestor-page-title {
+        font-size: 17px;
+    }
+
+    .addinvestor-page {
+        padding: 10px;
+    }
+
+    .addinvestor-page-header {
+        margin-bottom: 16px;
+    }
+
+    .addinvestor-card {
+        padding: 14px;
+    }
+
+    .addinvestor-section-title {
+        font-size: 0.875rem;
+        margin-bottom: 14px;
+        padding-bottom: 6px;
+    }
+
+    .addinvestor-section-title::before {
+        width: 50px;
+    }
+
+    .addinvestor-form-grid {
+        gap: 12px;
+    }
+
+    .addinvestor-form-label {
+        font-size: 0.6875rem;
+    }
+
+    .addinvestor-form-input,
+    .addinvestor-form-select {
+        padding: 8px 10px;
+        font-size: 0.6875rem;
+        min-height: 38px;
+    }
+
+    .addinvestor-btn {
+        padding: 10px;
+        font-size: 13px;
+        height: 42px;
+    }
+}
+
+/* Landscape Mode for Mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .addinvestor-header {
+        min-height: 65px;
+        padding: 10px 16px;
+    }
+
+    .addinvestor-page {
+        padding: 16px;
+    }
+
+    .addinvestor-card {
+        padding: 20px;
+    }
+
+    .addinvestor-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .addinvestor-form-input,
+    .addinvestor-form-select {
+        min-height: 44px;
+    }
+
+    .addinvestor-page-header {
+        margin-bottom: 20px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+
+    .addinvestor-icon-btn:active,
+    .addinvestor-menu-toggle:active,
+    .addinvestor-btn:active {
+        transform: scale(0.95);
+        background: #f1f5f9;
+    }
+
+    .addinvestor-btn-primary:active {
+        background: linear-gradient(135deg, #e31c4d, #c81e3d);
+    }
+
+    .addinvestor-btn-outline:active {
+        background: #fef2f2;
+    }
+
+    /* Increase tap targets for mobile */
+    .addinvestor-form-input,
+    .addinvestor-form-select,
+    .addinvestor-icon-btn,
+    .addinvestor-menu-toggle,
+    .addinvestor-btn {
+        min-height: 44px;
+    }
+
+    /* Better touch scrolling */
+    .addinvestor-page {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* High DPI Screens */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .addinvestor-card {
+        border: 1px solid #e5e7eb;
+    }
+
+    .addinvestor-header {
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .addinvestor-main,
+    .addinvestor-card,
+    .addinvestor-icon-btn,
+    .addinvestor-menu-toggle,
+    .addinvestor-btn,
+    .addinvestor-form-input,
+    .addinvestor-form-select {
+        transition: none;
+    }
+
+    .addinvestor-icon-btn:hover,
+    .addinvestor-btn:hover {
+        transform: none;
+    }
+
+    .addinvestor-notification-dot {
+        animation: none;
+    }
+
+    @keyframes addinvestor-fade-in {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .addinvestor-wrapper {
+        background: #0f172a;
+    }
+
+    .addinvestor-header {
+        background: #1e293b;
+        border-bottom-color: #334155;
+    }
+
+    .addinvestor-page-title {
+        color: #f1f5f9;
+    }
+
+    .addinvestor-icon-btn,
+    .addinvestor-menu-toggle {
+        background: #1e293b;
+        border-color: #334155;
+        color: #cbd5e1;
+    }
+
+    .addinvestor-icon-btn:hover {
+        background: #334155;
+        border-color: #ff385c;
+        color: #ff385c;
+    }
+
+    .addinvestor-notification-dot {
+        border-color: #1e293b;
+    }
+
+    .addinvestor-user-name {
+        color: #f1f5f9;
+    }
+
+    .addinvestor-user-role {
+        color: #94a3b8;
+    }
+
+    .addinvestor-page {
+        background-color: #0f172a;
+    }
+
+    .addinvestor-breadcrumb {
+        color: #94a3b8;
+    }
+
+    .addinvestor-btn-outline {
+        background: #1e293b;
+        border-color: #ff385c;
+        color: #ff385c;
+    }
+
+    .addinvestor-btn-outline:hover {
+        background: #334155;
+        color: #ff385c;
+    }
+
+    .addinvestor-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    .addinvestor-section-title {
+        color: #f1f5f9;
+        border-bottom-color: #334155;
+    }
+
+    .addinvestor-section-title::before {
+        background: linear-gradient(135deg, #ff385c, #e31c4d);
+    }
+
+    .addinvestor-form-label {
+        color: #cbd5e1;
+    }
+
+    .addinvestor-form-input,
+    .addinvestor-form-select {
+        background: #0f172a;
+        border-color: #334155;
+        color: #f1f5f9;
+    }
+
+    .addinvestor-form-input:focus,
+    .addinvestor-form-select:focus {
+        border-color: #ff385c;
+        box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.2);
+    }
+
+    .addinvestor-form-input::placeholder {
+        color: #64748b;
+    }
+
+    .addinvestor-form-input[type="date"] {
+        color: #64748b;
+    }
+
+    .addinvestor-form-input[type="date"]:valid {
+        color: #f1f5f9;
+    }
+
+    .addinvestor-form-input:invalid:not(:focus):not(:placeholder-shown) {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: #f87171;
+    }
+
+    .addinvestor-form-input:valid:not(:placeholder-shown) {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: #4ade80;
+    }
+}
