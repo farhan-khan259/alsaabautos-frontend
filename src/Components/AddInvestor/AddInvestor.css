@@ -1,7 +1,7 @@
 /* AddInvestor Wrapper */
 .addinvestor-wrapper {
     min-height: 100vh;
-    background: #f5f6fa;
+    background: #f8fafc;
     display: flex;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
@@ -24,19 +24,19 @@
     width: calc(100% - 80px);
 }
 
-/* Header */
+/* Header - UPDATED TO MATCH DASHBOARD */
 .addinvestor-header {
-    background: white;
+    background: #ffffff;
     padding: 20px 30px;
-    height: 80px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e2e8f0;
     position: sticky;
     top: 0;
     z-index: 100;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    min-height: 80px;
 }
 
 .addinvestor-header-left {
@@ -51,7 +51,7 @@
     background: none;
     border: none;
     font-size: 24px;
-    color: #6b7280;
+    color: #64748b;
     cursor: pointer;
     display: none;
     padding: 8px;
@@ -64,8 +64,8 @@
 }
 
 .addinvestor-menu-toggle:hover {
-    background: #f9fafb;
-    color: #1a1a1a;
+    background: #f1f5f9;
+    color: #334155;
 }
 
 .addinvestor-menu-toggle:active {
@@ -75,7 +75,7 @@
 .addinvestor-page-title {
     font-size: 28px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #0f172a;
     margin: 0;
     letter-spacing: -0.025em;
     white-space: nowrap;
@@ -83,7 +83,7 @@
     text-overflow: ellipsis;
 }
 
-/* Header Actions */
+/* Header Actions - UPDATED TO MATCH DASHBOARD */
 .addinvestor-header-actions {
     display: flex;
     align-items: center;
@@ -92,12 +92,12 @@
 }
 
 .addinvestor-icon-btn {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     padding: 10px;
     border-radius: 10px;
     font-size: 20px;
-    color: #6b7280;
+    color: #64748b;
     cursor: pointer;
     transition: all 0.2s ease;
     width: 44px;
@@ -109,15 +109,11 @@
 }
 
 .addinvestor-icon-btn:hover {
-    background: #f9fafb;
-    border-color: #ff385c;
-    color: #ff385c;
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
     transform: translateY(-1px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-.addinvestor-icon-btn:active {
-    transform: translateY(0);
 }
 
 .addinvestor-notification-btn {
@@ -130,9 +126,9 @@
     right: 9px;
     width: 8px;
     height: 8px;
-    background: #ff385c;
+    background: #ef4444;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 2px solid #ffffff;
     animation: addinvestor-pulse 2s infinite;
 }
 
@@ -148,7 +144,7 @@
     }
 }
 
-/* User Profile */
+/* User Profile - UPDATED TO MATCH DASHBOARD */
 .addinvestor-user-profile {
     display: flex;
     align-items: center;
@@ -159,12 +155,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    margin-left: 8px;
+    min-width: 120px;
 }
 
 .addinvestor-user-name {
     font-size: 15px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: #0f172a;
     line-height: 1.4;
     white-space: nowrap;
     overflow: hidden;
@@ -174,7 +172,7 @@
 
 .addinvestor-user-role {
     font-size: 12px;
-    color: #6b7280;
+    color: #64748b;
     font-weight: 500;
     line-height: 1.4;
 }
@@ -186,7 +184,8 @@
     margin: 0 auto;
     width: 100%;
     min-height: calc(100vh - 80px);
-    background-color: #f5f6fa;
+    background-color: #f8fafc;
+    box-sizing: border-box;
 }
 
 .addinvestor-page-header {
@@ -218,7 +217,7 @@
 
 .addinvestor-breadcrumb {
     font-size: 13px;
-    color: #9ca3af;
+    color: #94a3b8;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -245,38 +244,32 @@
     gap: 8px;
     min-width: 120px;
     height: 48px;
+    white-space: nowrap;
 }
 
 .addinvestor-btn-primary {
-    background: linear-gradient(135deg, #ff385c, #e31c4d);
+    background: linear-gradient(135deg, #FF2741, #FF2741);
     color: white;
-    box-shadow: 0 2px 4px rgba(255, 56, 92, 0.2);
 }
 
 .addinvestor-btn-primary:hover {
-    background: linear-gradient(135deg, #e31c4d, #c81e3d);
+    background: linear-gradient(135deg, #FF2741, #FF2741);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 56, 92, 0.3);
-}
-
-.addinvestor-btn-primary:active {
-    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
 }
 
 .addinvestor-btn-outline {
     background: white;
-    color: #ff385c;
-    border: 1px solid #ff385c;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
 }
 
 .addinvestor-btn-outline:hover {
-    background: #fef2f2;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(255, 56, 92, 0.1);
-}
-
-.addinvestor-btn-outline:active {
-    transform: translateY(0);
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* Card */
@@ -284,26 +277,22 @@
     background: white;
     border-radius: 16px;
     padding: 32px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     transition: box-shadow 0.2s ease;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e2e8f0;
 }
 
 .addinvestor-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.addinvestor-form-section {
-    margin-bottom: 0;
-}
-
 .addinvestor-section-title {
-    font-size: 1.25rem;
+    font-size: 24px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #0f172a;
     margin-bottom: 24px;
     padding-bottom: 16px;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 2px solid #e2e8f0;
     letter-spacing: -0.025em;
     position: relative;
 }
@@ -315,7 +304,7 @@
     bottom: -2px;
     width: 80px;
     height: 2px;
-    background: linear-gradient(135deg, #ff385c, #e31c4d);
+    background: linear-gradient(135deg, #FF2741, #FF2741);
     border-radius: 1px;
 }
 
@@ -333,9 +322,9 @@
 }
 
 .addinvestor-form-label {
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: #334155;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -344,7 +333,7 @@
 
 .addinvestor-form-label::after {
     content: "*";
-    color: #ff385c;
+    color: #FF2741;
     font-size: 1.2em;
     margin-left: 2px;
 }
@@ -352,40 +341,51 @@
 .addinvestor-form-input,
 .addinvestor-form-select {
     padding: 12px 16px;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 10px;
-    font-size: 0.875rem;
+    font-size: 14px;
     transition: all 0.2s ease;
     width: 100%;
-    background: white;
-    color: #1f2937;
+    background: #f8fafc;
+    color: #0f172a;
     min-height: 48px;
+    box-sizing: border-box;
 }
 
 .addinvestor-form-input:focus,
 .addinvestor-form-select:focus {
     outline: none;
-    border-color: #ff385c;
+    border-color: #FF2741;
+    background: white;
     box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.1);
 }
 
 .addinvestor-form-input::placeholder {
-    color: #9ca3af;
+    color: #94a3b8;
     font-weight: 400;
 }
 
 .addinvestor-form-input[type="date"] {
-    color: #9ca3af;
+    color: #94a3b8;
 }
 
 .addinvestor-form-input[type="date"]:valid {
-    color: #1f2937;
+    color: #0f172a;
 }
 
 .addinvestor-form-input[type="number"]::-webkit-inner-spin-button,
 .addinvestor-form-input[type="number"]::-webkit-outer-spin-button {
     opacity: 1;
     height: 24px;
+}
+
+.addinvestor-form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 20px;
+    padding-right: 48px;
 }
 
 /* Validation Styles */
@@ -399,20 +399,7 @@
     background: #f0fdf4;
 }
 
-.addinvestor-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-/* Focus styles for accessibility */
-.addinvestor-form-input:focus-visible,
-.addinvestor-form-select:focus-visible,
-.addinvestor-btn:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-}
-
-/* ===== RESPONSIVE STYLES ===== */
+/* ===== RESPONSIVE STYLES - UPDATED ===== */
 
 /* Large Tablets and Small Desktops (1024px - 1200px) */
 @media (max-width: 1200px) {
@@ -479,7 +466,7 @@
     }
 
     .addinvestor-section-title {
-        font-size: 1.125rem;
+        font-size: 22px;
         margin-bottom: 20px;
         padding-bottom: 14px;
     }
@@ -508,6 +495,7 @@
         width: 100%;
     }
 
+    /* Header Responsive - Match Dashboard */
     .addinvestor-header {
         padding: 14px 16px;
         flex-wrap: wrap;
@@ -526,19 +514,21 @@
     }
 
     .addinvestor-header-actions {
-        width: 100%;
+        /* width: 100%; */
         justify-content: space-between;
         order: 2;
         padding-top: 8px;
         border-top: 1px solid #f1f5f9;
     }
 
-    .addinvestor-user-profile {
-        order: -1;
-    }
-
     .addinvestor-user-info {
         align-items: flex-start;
+        margin-left: 0;
+        min-width: auto;
+    }
+
+    .addinvestor-user-name {
+        max-width: none;
     }
 
     .addinvestor-page {
@@ -578,9 +568,13 @@
     }
 
     .addinvestor-section-title {
-        font-size: 1.125rem;
+        font-size: 20px;
         margin-bottom: 20px;
         padding-bottom: 12px;
+    }
+
+    .addinvestor-section-title::before {
+        width: 60px;
     }
 
     .addinvestor-form-grid {
@@ -590,13 +584,13 @@
     .addinvestor-form-input,
     .addinvestor-form-select {
         padding: 11px 14px;
-        font-size: 0.8125rem;
+        font-size: 13px;
         min-height: 44px;
         border-radius: 8px;
     }
 
     .addinvestor-form-label {
-        font-size: 0.8125rem;
+        font-size: 13px;
     }
 }
 
@@ -671,16 +665,13 @@
 
     .addinvestor-card {
         padding: 18px;
+        border-radius: 10px;
     }
 
     .addinvestor-section-title {
-        font-size: 1rem;
+        font-size: 18px;
         margin-bottom: 18px;
         padding-bottom: 10px;
-    }
-
-    .addinvestor-section-title::before {
-        width: 60px;
     }
 
     .addinvestor-form-grid {
@@ -692,13 +683,13 @@
     }
 
     .addinvestor-form-label {
-        font-size: 0.75rem;
+        font-size: 12px;
     }
 
     .addinvestor-form-input,
     .addinvestor-form-select {
         padding: 10px 12px;
-        font-size: 0.75rem;
+        font-size: 12px;
         min-height: 42px;
     }
 }
@@ -720,7 +711,6 @@
     }
 
     .addinvestor-header-actions {
-        justify-content: space-around;
         gap: 8px;
     }
 
@@ -731,7 +721,19 @@
     }
 
     .addinvestor-user-info {
-        display: none;
+        display: flex;
+        align-items: flex-start;
+        margin-left: 0;
+        min-width: auto;
+    }
+
+    .addinvestor-user-name {
+        font-size: 13px;
+        max-width: 120px;
+    }
+
+    .addinvestor-user-role {
+        font-size: 10px;
     }
 
     .addinvestor-page {
@@ -748,13 +750,17 @@
 
     .addinvestor-card {
         padding: 16px;
-        border-radius: 10px;
+        border-radius: 8px;
     }
 
     .addinvestor-section-title {
-        font-size: 0.9375rem;
+        font-size: 17px;
         margin-bottom: 16px;
         padding-bottom: 8px;
+    }
+
+    .addinvestor-section-title::before {
+        width: 50px;
     }
 
     .addinvestor-form-grid {
@@ -764,7 +770,7 @@
     .addinvestor-form-input,
     .addinvestor-form-select {
         padding: 9px 10px;
-        font-size: 0.75rem;
+        font-size: 12px;
         min-height: 40px;
         border-radius: 6px;
     }
@@ -807,13 +813,9 @@
     }
 
     .addinvestor-section-title {
-        font-size: 0.875rem;
+        font-size: 16px;
         margin-bottom: 14px;
         padding-bottom: 6px;
-    }
-
-    .addinvestor-section-title::before {
-        width: 50px;
     }
 
     .addinvestor-form-grid {
@@ -821,13 +823,13 @@
     }
 
     .addinvestor-form-label {
-        font-size: 0.6875rem;
+        font-size: 11px;
     }
 
     .addinvestor-form-input,
     .addinvestor-form-select {
         padding: 8px 10px;
-        font-size: 0.6875rem;
+        font-size: 11px;
         min-height: 38px;
     }
 
@@ -875,15 +877,14 @@
     .addinvestor-menu-toggle:active,
     .addinvestor-btn:active {
         transform: scale(0.95);
-        background: #f1f5f9;
     }
 
     .addinvestor-btn-primary:active {
-        background: linear-gradient(135deg, #e31c4d, #c81e3d);
+        background: linear-gradient(135deg, #FF2741, #FF2741);
     }
 
     .addinvestor-btn-outline:active {
-        background: #fef2f2;
+        background: #f1f5f9;
     }
 
     /* Increase tap targets for mobile */
@@ -893,23 +894,6 @@
     .addinvestor-menu-toggle,
     .addinvestor-btn {
         min-height: 44px;
-    }
-
-    /* Better touch scrolling */
-    .addinvestor-page {
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* High DPI Screens */
-@media (-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi) {
-    .addinvestor-card {
-        border: 1px solid #e5e7eb;
-    }
-
-    .addinvestor-header {
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 }
 
@@ -957,8 +941,13 @@
         border-bottom-color: #334155;
     }
 
-    .addinvestor-page-title {
+    .addinvestor-page-title,
+    .addinvestor-user-name {
         color: #f1f5f9;
+    }
+
+    .addinvestor-user-role {
+        color: #94a3b8;
     }
 
     .addinvestor-icon-btn,
@@ -970,20 +959,12 @@
 
     .addinvestor-icon-btn:hover {
         background: #334155;
-        border-color: #ff385c;
-        color: #ff385c;
+        border-color: #FF2741;
+        color: #FF2741;
     }
 
     .addinvestor-notification-dot {
         border-color: #1e293b;
-    }
-
-    .addinvestor-user-name {
-        color: #f1f5f9;
-    }
-
-    .addinvestor-user-role {
-        color: #94a3b8;
     }
 
     .addinvestor-page {
@@ -996,13 +977,13 @@
 
     .addinvestor-btn-outline {
         background: #1e293b;
-        border-color: #ff385c;
-        color: #ff385c;
+        border-color: #334155;
+        color: #cbd5e1;
     }
 
     .addinvestor-btn-outline:hover {
         background: #334155;
-        color: #ff385c;
+        color: #f1f5f9;
     }
 
     .addinvestor-card {
@@ -1016,7 +997,7 @@
     }
 
     .addinvestor-section-title::before {
-        background: linear-gradient(135deg, #ff385c, #e31c4d);
+        background: linear-gradient(135deg, #FF2741, #FF2741);
     }
 
     .addinvestor-form-label {
@@ -1032,7 +1013,8 @@
 
     .addinvestor-form-input:focus,
     .addinvestor-form-select:focus {
-        border-color: #ff385c;
+        border-color: #FF2741;
+        background: #1e293b;
         box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.2);
     }
 

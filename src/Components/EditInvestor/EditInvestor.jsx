@@ -52,12 +52,13 @@ const EditInvestor = () => {
             : "editinvestor-sidebar-closed"
         }`}
       >
-        {/* Header */}
+        {/* Header - UPDATED TO MATCH ADD INVESTOR */}
         <div className="editinvestor-header">
           <div className="editinvestor-header-left">
             <button
               className="editinvestor-menu-toggle"
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
               <MdMenu />
             </button>
@@ -65,13 +66,16 @@ const EditInvestor = () => {
           </div>
 
           <div className="editinvestor-header-actions">
-            <button className="editinvestor-icon-btn">
+            <button className="editinvestor-icon-btn" aria-label="Search">
               <MdSearch />
             </button>
-            <button className="editinvestor-icon-btn">
+            <button className="editinvestor-icon-btn" aria-label="Settings">
               <MdSettings />
             </button>
-            <button className="editinvestor-icon-btn editinvestor-notification-btn">
+            <button
+              className="editinvestor-icon-btn editinvestor-notification-btn"
+              aria-label="Notifications"
+            >
               <MdNotifications />
               <span className="editinvestor-notification-dot"></span>
             </button>

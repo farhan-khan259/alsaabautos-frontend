@@ -3,63 +3,120 @@
 }
 
 .editexpense-wrapper {
-    display: flex;
     min-height: 100vh;
-    background: #f0f4f8;
-    overflow-x: hidden;
+    background: #f8fafc;
+    display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* MAIN */
 .editexpense-main {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    transition: margin 0.3s ease;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-.editexpense-sidebar-open {
+.editexpense-main.editexpense-sidebar-open {
     margin-left: 250px;
+    width: calc(100% - 250px);
 }
 
-.editexpense-sidebar-closed {
+.editexpense-main.editexpense-sidebar-closed {
     margin-left: 80px;
+    width: calc(100% - 80px);
 }
 
-/* HEADER */
+/* HEADER - UPDATED TO MATCH OTHER COMPONENTS */
 .editexpense-header {
-    height: 72px;
     background: #ffffff;
-    padding: 0 24px;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    min-height: 80px;
 }
 
 .editexpense-header-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
 }
 
 .editexpense-menu-toggle {
-    display: none;
     background: none;
     border: none;
-    font-size: 22px;
+    font-size: 24px;
+    color: #64748b;
+    cursor: pointer;
+    display: none;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
 }
 
+.editexpense-menu-toggle:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.editexpense-menu-toggle:active {
+    transform: scale(0.95);
+}
+
+.editexpense-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Header Actions - UPDATED TO MATCH OTHER COMPONENTS */
 .editexpense-header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    flex-shrink: 0;
 }
 
 .editexpense-icon-btn {
     background: #ffffff;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     padding: 10px;
-    border-radius: 8px;
+    border-radius: 10px;
+    font-size: 20px;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.editexpense-icon-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .editexpense-notification-btn {
@@ -68,111 +125,880 @@
 
 .editexpense-notification-dot {
     position: absolute;
-    top: 6px;
-    right: 6px;
+    top: 9px;
+    right: 9px;
     width: 8px;
     height: 8px;
-    background: #ff385c;
+    background: #ef4444;
     border-radius: 50%;
+    border: 2px solid #ffffff;
+    animation: editexpense-pulse 2s infinite;
 }
 
+@keyframes editexpense-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* User Info - UPDATED TO MATCH OTHER COMPONENTS */
 .editexpense-user-info {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    margin-left: 8px;
+    min-width: 120px;
+}
+
+.editexpense-user-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.editexpense-user-role {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.4;
 }
 
 /* CONTENT */
 .editexpense-content {
-    padding: clamp(12px, 2vw, 30px);
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    background-color: #f8fafc;
+    box-sizing: border-box;
+    animation: editexpense-fade-in 0.6s ease-out;
+}
+
+@keyframes editexpense-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .editexpense-form-container {
     background: #ffffff;
     max-width: 960px;
-    margin: auto;
-    border-radius: 12px;
+    margin: 0 auto;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    transition: box-shadow 0.2s ease;
+}
+
+.editexpense-form-container:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* FORM HEADER */
 .editexpense-form-header {
-    padding: 18px 24px;
-    border-bottom: 1px solid #d1d5db;
+    padding: 24px 30px;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #f8fafc;
+}
+
+.editexpense-form-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.025em;
 }
 
 .editexpense-form-actions {
     display: flex;
-    gap: 10px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.editexpense-save-btn,
+.editexpense-remove-btn {
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    height: 48px;
+    white-space: nowrap;
 }
 
 .editexpense-save-btn {
-    background: #4f46e5;
-    color: #ffffff;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
+    background: linear-gradient(135deg, #FF2741, #FF2741);
+    color: white;
+}
+
+.editexpense-save-btn:hover {
+    background: linear-gradient(135deg, #FF2741, #FF2741);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
 }
 
 .editexpense-remove-btn {
-    background: #ffffff;
-    border: 1px solid #ef4444;
-    color: #ef4444;
-    padding: 8px 18px;
-    border-radius: 6px;
+    background: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.editexpense-remove-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* FORM */
 .editexpense-form {
-    padding: clamp(16px, 2vw, 30px);
+    padding: 30px;
 }
 
 .editexpense-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
+    gap: 24px;
     margin-bottom: 24px;
+}
+
+.editexpense-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .editexpense-field label {
     display: block;
-    margin-bottom: 8px;
+    font-size: 14px;
     font-weight: 600;
+    color: #334155;
+    letter-spacing: 0.01em;
+}
+
+.editexpense-field label::after {
+    content: "*";
+    color: #FF2741;
+    font-size: 1.2em;
+    margin-left: 2px;
 }
 
 .editexpense-field input,
 .editexpense-field select {
     width: 100%;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    color: #0f172a;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    box-sizing: border-box;
 }
 
-/* PAGE TITLE */
-.editexpense-page-title {
-    font-size: 28px;
-    font-weight: 600;
-    color: #1a1a1a;
+.editexpense-field input:focus,
+.editexpense-field select:focus {
+    outline: none;
+    border-color: #FF2741;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.1);
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .editexpense-menu-toggle {
-        display: block;
+.editexpense-field input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Number input styling */
+.editexpense-field input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.editexpense-field input[type="number"]::-webkit-outer-spin-button,
+.editexpense-field input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    opacity: 1;
+    height: 24px;
+}
+
+/* Select styling */
+.editexpense-field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 20px;
+    padding-right: 48px;
+    cursor: pointer;
+}
+
+/* Form Validation Styles */
+.editexpense-field input:invalid:not(:focus):not(:placeholder-shown),
+.editexpense-field select:invalid:not(:focus) {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.editexpense-field input:valid:not(:placeholder-shown),
+.editexpense-field select:valid {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+/* ===== RESPONSIVE STYLES - UPDATED ===== */
+
+/* Large Tablets and Small Desktops (1024px - 1200px) */
+@media (max-width: 1200px) {
+    .editexpense-main.editexpense-sidebar-open {
+        margin-left: 220px;
+        width: calc(100% - 220px);
     }
 
-    .editexpense-main {
-        margin-left: 0 !important;
+    .editexpense-main.editexpense-sidebar-closed {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+
+    .editexpense-content {
+        padding: 25px;
+    }
+
+    .editexpense-form-container {
+        border-radius: 14px;
+    }
+
+    .editexpense-form-header,
+    .editexpense-form {
+        padding: 24px;
+    }
+}
+
+/* Tablets (768px - 992px) */
+@media (max-width: 992px) {
+    .editexpense-main.editexpense-sidebar-open {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .editexpense-main.editexpense-sidebar-closed {
+        margin-left: 60px;
+        width: calc(100% - 60px);
+    }
+
+    .editexpense-header {
+        padding: 16px 20px;
+        min-height: 75px;
+    }
+
+    .editexpense-page-title {
+        font-size: 24px;
+    }
+
+    .editexpense-content {
+        padding: 20px;
+    }
+
+    .editexpense-form-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .editexpense-form-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .editexpense-form {
+        padding: 20px;
+    }
+
+    .editexpense-grid {
+        gap: 20px;
+    }
+
+    .editexpense-field input,
+    .editexpense-field select {
+        min-height: 44px;
+        padding: 11px 14px;
+        font-size: 13px;
+    }
+
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        padding: 11px 24px;
+        min-width: 110px;
+        height: 44px;
+    }
+
+    .editexpense-user-name {
+        font-size: 14px;
+        max-width: 140px;
+    }
+}
+
+/* Mobile and Small Tablets (576px - 768px) */
+@media (max-width: 768px) {
+    .editexpense-menu-toggle {
+        display: flex;
+    }
+
+    .editexpense-main.editexpense-sidebar-open,
+    .editexpense-main.editexpense-sidebar-closed {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* Header Responsive - Match Other Components */
+    .editexpense-header {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+        min-height: auto;
+    }
+
+    .editexpense-header-left {
+        width: 100%;
+        justify-content: space-between;
+        order: 1;
+    }
+
+    .editexpense-page-title {
+        font-size: 22px;
+    }
+
+    .editexpense-header-actions {
+        /* width: 100%; */
+        justify-content: space-between;
+        order: 2;
+        padding-top: 8px;
+        border-top: 1px solid #f1f5f9;
     }
 
     .editexpense-user-info {
-        display: none;
+        align-items: flex-start;
+        margin-left: 0;
+        min-width: auto;
+    }
+
+    .editexpense-user-name {
+        max-width: none;
+    }
+
+    .editexpense-content {
+        padding: 16px;
+    }
+
+    .editexpense-form-container {
+        border-radius: 12px;
+    }
+
+    .editexpense-form-header {
+        padding: 16px;
+    }
+
+    .editexpense-form-title {
+        font-size: 18px;
+    }
+
+    .editexpense-form {
+        padding: 16px;
     }
 
     .editexpense-grid {
         grid-template-columns: 1fr;
+        gap: 18px;
     }
+
+    .editexpense-form-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 13px;
+        height: 44px;
+        min-width: auto;
+    }
+
+    .editexpense-field input,
+    .editexpense-field select {
+        padding: 11px 14px;
+        font-size: 13px;
+        min-height: 44px;
+        border-radius: 8px;
+    }
+
+    .editexpense-field label {
+        font-size: 13px;
+    }
+}
+
+/* Small Mobile Devices (480px - 576px) */
+@media (max-width: 576px) {
+    .editexpense-header {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .editexpense-menu-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        padding: 6px;
+    }
+
+    .editexpense-page-title {
+        font-size: 20px;
+    }
+
+    .editexpense-header-actions {
+        gap: 10px;
+    }
+
+    .editexpense-icon-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        padding: 8px;
+    }
+
+    .editexpense-user-info {
+        flex: 1;
+        margin-left: 8px;
+    }
+
+    .editexpense-user-name {
+        font-size: 13px;
+        max-width: none;
+    }
+
+    .editexpense-user-role {
+        font-size: 11px;
+    }
+
+    .editexpense-content {
+        padding: 14px;
+    }
+
+    .editexpense-form-header {
+        padding: 14px;
+    }
+
+    .editexpense-form {
+        padding: 14px;
+    }
+
+    .editexpense-grid {
+        gap: 16px;
+    }
+
+    .editexpense-field {
+        gap: 6px;
+    }
+
+    .editexpense-field label {
+        font-size: 12px;
+    }
+
+    .editexpense-field input,
+    .editexpense-field select {
+        padding: 10px 12px;
+        font-size: 12px;
+        min-height: 42px;
+    }
+
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        padding: 10px 16px;
+        height: 42px;
+        font-size: 12px;
+    }
+}
+
+/* Extra Small Mobile Devices (375px - 480px) */
+@media (max-width: 480px) {
+    .editexpense-header {
+        padding: 10px 12px;
+    }
+
+    .editexpense-menu-toggle {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+    }
+
+    .editexpense-page-title {
+        font-size: 18px;
+    }
+
+    .editexpense-header-actions {
+        gap: 8px;
+    }
+
+    .editexpense-icon-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .editexpense-user-info {
+        display: flex;
+        align-items: flex-start;
+        margin-left: 0;
+        min-width: auto;
+    }
+
+    .editexpense-user-name {
+        font-size: 13px;
+        max-width: 120px;
+    }
+
+    .editexpense-user-role {
+        font-size: 10px;
+    }
+
+    .editexpense-content {
+        padding: 12px;
+    }
+
+    .editexpense-form-container {
+        border-radius: 10px;
+    }
+
+    .editexpense-form-header {
+        padding: 12px;
+    }
+
+    .editexpense-form-title {
+        font-size: 17px;
+    }
+
+    .editexpense-form {
+        padding: 12px;
+    }
+
+    .editexpense-grid {
+        gap: 14px;
+    }
+
+    .editexpense-field input,
+    .editexpense-field select {
+        padding: 9px 12px;
+        font-size: 12px;
+        min-height: 40px;
+        border-radius: 6px;
+    }
+
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        padding: 9px 14px;
+        height: 40px;
+        font-size: 12px;
+    }
+}
+
+/* Very Small Mobile Devices (below 375px) */
+@media (max-width: 375px) {
+    .editexpense-header {
+        padding: 8px 10px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .editexpense-header-left {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .editexpense-header-actions {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0;
+        padding-top: 6px;
+    }
+
+    .editexpense-page-title {
+        font-size: 17px;
+    }
+
+    .editexpense-content {
+        padding: 10px;
+    }
+
+    .editexpense-form-container {
+        border-radius: 8px;
+    }
+
+    .editexpense-form-header {
+        padding: 10px;
+    }
+
+    .editexpense-form {
+        padding: 10px;
+    }
+
+    .editexpense-grid {
+        gap: 12px;
+    }
+
+    .editexpense-field input,
+    .editexpense-field select {
+        padding: 8px 10px;
+        font-size: 11px;
+        min-height: 38px;
+    }
+
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        padding: 8px 12px;
+        height: 38px;
+        font-size: 11px;
+    }
+}
+
+/* Landscape Mode for Mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .editexpense-header {
+        min-height: 65px;
+        padding: 10px 16px;
+    }
+
+    .editexpense-content {
+        padding: 16px;
+    }
+
+    .editexpense-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .editexpense-form-actions {
+        flex-direction: row;
+    }
+
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        width: auto;
+        min-width: 140px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+
+    .editexpense-icon-btn:active,
+    .editexpense-menu-toggle:active,
+    .editexpense-save-btn:active,
+    .editexpense-remove-btn:active {
+        transform: scale(0.95);
+    }
+
+    .editexpense-save-btn:active {
+        background: linear-gradient(135deg, #FF2741, #FF2741);
+    }
+
+    .editexpense-remove-btn:active {
+        background: #f1f5f9;
+    }
+
+    /* Increase tap targets for mobile */
+    .editexpense-field input,
+    .editexpense-field select,
+    .editexpense-icon-btn,
+    .editexpense-menu-toggle,
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        min-height: 44px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .editexpense-main,
+    .editexpense-form-container,
+    .editexpense-icon-btn,
+    .editexpense-menu-toggle,
+    .editexpense-save-btn,
+    .editexpense-remove-btn,
+    .editexpense-field input,
+    .editexpense-field select {
+        transition: none;
+    }
+
+    .editexpense-icon-btn:hover,
+    .editexpense-save-btn:hover,
+    .editexpense-remove-btn:hover,
+    .editexpense-form-container:hover {
+        transform: none;
+    }
+
+    .editexpense-notification-dot {
+        animation: none;
+    }
+
+    @keyframes editexpense-fade-in {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .editexpense-wrapper {
+        background: #0f172a;
+    }
+
+    .editexpense-header {
+        background: #1e293b;
+        border-bottom-color: #334155;
+    }
+
+    .editexpense-page-title,
+    .editexpense-user-name {
+        color: #f1f5f9;
+    }
+
+    .editexpense-user-role {
+        color: #94a3b8;
+    }
+
+    .editexpense-icon-btn,
+    .editexpense-menu-toggle {
+        background: #1e293b;
+        border-color: #334155;
+        color: #cbd5e1;
+    }
+
+    .editexpense-icon-btn:hover {
+        background: #334155;
+        border-color: #FF2741;
+        color: #FF2741;
+    }
+
+    .editexpense-notification-dot {
+        border-color: #1e293b;
+    }
+
+    .editexpense-content {
+        background-color: #0f172a;
+    }
+
+    .editexpense-form-container {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    .editexpense-form-header {
+        background: #0f172a;
+        border-bottom-color: #334155;
+    }
+
+    .editexpense-form-title {
+        color: #f1f5f9;
+    }
+
+    .editexpense-save-btn,
+    .editexpense-remove-btn {
+        background: linear-gradient(135deg, #FF2741, #FF2741);
+        color: white;
+    }
+
+    .editexpense-save-btn:hover,
+    .editexpense-remove-btn:hover {
+        background: linear-gradient(135deg, #FF2741, #FF2741);
+    }
+
+    .editexpense-field label {
+        color: #cbd5e1;
+    }
+
+    .editexpense-field input,
+    .editexpense-field select {
+        background: #0f172a;
+        border-color: #334155;
+        color: #f1f5f9;
+    }
+
+    .editexpense-field input:focus,
+    .editexpense-field select:focus {
+        border-color: #FF2741;
+        background: #1e293b;
+        box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.2);
+    }
+
+    .editexpense-field input::placeholder {
+        color: #64748b;
+    }
+
+    .editexpense-field input:invalid:not(:focus):not(:placeholder-shown),
+    .editexpense-field select:invalid:not(:focus) {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: #f87171;
+    }
+
+    .editexpense-field input:valid:not(:placeholder-shown),
+    .editexpense-field select:valid {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: #4ade80;
+    }
+}
+
+/* Focus styles for accessibility */
+.editexpense-field input:focus-visible,
+.editexpense-field select:focus-visible,
+.editexpense-save-btn:focus-visible,
+.editexpense-remove-btn:focus-visible,
+.editexpense-icon-btn:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Disabled state */
+.editexpense-save-btn:disabled,
+.editexpense-remove-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
 }

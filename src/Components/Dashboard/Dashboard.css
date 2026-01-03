@@ -358,7 +358,7 @@
     }
 
     .dashboard-header-actions {
-        width: 100%;
+        /* width: 100%; */
         justify-content: space-between;
         order: 2;
         padding-top: 8px;
@@ -625,5 +625,280 @@
 
     .dashboard-stat-value {
         font-size: 18px;
+    }
+}
+
+
+/* extra */
+
+/* Loading states */
+.dashboard-stat-card.loading {
+    opacity: 0.7;
+}
+
+.dashboard-stat-loading {
+    display: inline-block;
+    width: 100px;
+    height: 24px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.dashboard-loading-badge {
+    background: #3b82f6;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-left: 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Spin animation for refresh */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error message */
+.dashboard-error {
+    background: #fee;
+    border: 1px solid #f99;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 20px;
+    color: #c00;
+}
+
+.dashboard-error-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-error-content button {
+    background: #c00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dashboard-error-content button:hover {
+    background: #a00;
+}
+
+/* Header improvements */
+.dashboard-title-section {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.dashboard-stats-update {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Refresh button */
+.dashboard-refresh-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Trend indicators */
+.dashboard-stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.trend-up {
+    color: #10b981;
+}
+
+.trend-down {
+    color: #ef4444;
+}
+
+/* Table styles */
+.dashboard-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-table-container {
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table th {
+    background: #f8fafc;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.dashboard-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-sold {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-in_stock {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Profit colors */
+.profit-positive {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.profit-negative {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Profit trend chart */
+.profit-trend-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.profit-trend-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    height: 200px;
+    padding: 20px 0;
+}
+
+.profit-trend-bar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.profit-trend-bar-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.profit-trend-bar-value {
+    flex: 1;
+    width: 30px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.profit-trend-bar-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: height 0.3s ease;
+}
+
+.profit-trend-bar-amount {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .dashboard-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .dashboard-header-actions {
+        flex-wrap: wrap;
     }
 }
