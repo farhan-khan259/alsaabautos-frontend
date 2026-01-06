@@ -1,31 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdDelete,
   MdEdit,
-  MdEventSeat,
   MdFilterList,
-  MdLocalGasStation,
   MdMenu,
   MdNotifications,
   MdSearch,
   MdSettings,
-  MdSpeed,
   MdViewList,
   MdViewModule,
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-import image1 from "../../Assets/Pictures/Image1.png";
-import image2 from "../../Assets/Pictures/Image2.png";
-import image3 from "../../Assets/Pictures/Image3.png";
-import image4 from "../../Assets/Pictures/Image4.png";
-import image5 from "../../Assets/Pictures/Image5.png";
-import image6 from "../../Assets/Pictures/Image6.png";
-import image7 from "../../Assets/Pictures/Image7.png";
-import image8 from "../../Assets/Pictures/Image8.png";
-import image9 from "../../Assets/Pictures/Image9.png";
-
 import Sidebar from "../Sidebar/Sidebar";
+import { unitsApi } from "../services/api";
 import "./Units.css";
 
 const Units = () => {
@@ -34,189 +22,59 @@ const Units = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(9);
-
-  const units = [
-    {
-      id: "RW-WZD001",
-      vinNumber: "353534535",
-      contactNo: "03401478382",
-      customerName: "Kyle Thompson",
-      investor: "Usmom, Horston",
-      purchase: 12788,
-      expenses: 567,
-      sale: 22788,
-      profit: 10000,
-      status: "In Stock",
-      type: "Convertible",
-      seats: 2,
-      fuel: "Petrol",
-      transmission: "Automatic",
-      image: image1,
-    },
-    {
-      id: "RW-WZD002",
-      vinNumber: "353534536",
-      contactNo: "03401478383",
-      customerName: "John Doe",
-      investor: "Investor A",
-      purchase: 15000,
-      expenses: 567,
-      sale: 25000,
-      profit: 10000,
-      status: "Sold",
-      type: "Sedan",
-      seats: 5,
-      fuel: "Petrol",
-      transmission: "Manual",
-      image: image2,
-    },
-    {
-      id: "RW-WZD003",
-      vinNumber: "353534537",
-      contactNo: "03401478384",
-      customerName: "Jane Smith",
-      investor: "Investor X",
-      purchase: 18000,
-      expenses: 567,
-      sale: 28000,
-      profit: 10000,
-      status: "In Stock",
-      type: "SUV",
-      seats: 7,
-      fuel: "Diesel",
-      transmission: "Automatic",
-      image: image3,
-    },
-    {
-      id: "RW-WZD004",
-      vinNumber: "353534538",
-      contactNo: "03401478385",
-      customerName: "Michael Brown",
-      investor: "Investor Y",
-      purchase: 22000,
-      expenses: 567,
-      sale: 32000,
-      profit: 10000,
-      status: "Sold",
-      type: "SUV",
-      seats: 5,
-      fuel: "Diesel",
-      transmission: "Automatic",
-      image: image4,
-    },
-    {
-      id: "RW-WZD005",
-      vinNumber: "353534539",
-      contactNo: "03401478386",
-      customerName: "Emma Wilson",
-      investor: "Investor Z",
-      purchase: 14000,
-      expenses: 567,
-      sale: 21000,
-      profit: 7000,
-      status: "In Stock",
-      type: "Hatchback",
-      seats: 5,
-      fuel: "Petrol",
-      transmission: "Manual",
-      image: image5,
-    },
-    {
-      id: "RW-WZD006",
-      vinNumber: "353534540",
-      contactNo: "03401478387",
-      customerName: "Daniel Lee",
-      investor: "Investor A, Investor B",
-      purchase: 26000,
-      expenses: 567,
-      sale: 36000,
-      profit: 10000,
-      status: "Sold",
-      type: "Pickup",
-      seats: 5,
-      fuel: "Diesel",
-      transmission: "Automatic",
-      image: image6,
-    },
-    {
-      id: "RW-WZD007",
-      vinNumber: "353534541",
-      contactNo: "03401478388",
-      customerName: "Sophia Taylor",
-      investor: "Investor C",
-      purchase: 17000,
-      expenses: 567,
-      sale: 24000,
-      profit: 7000,
-      status: "In Stock",
-      type: "Sedan",
-      seats: 5,
-      fuel: "Hybrid",
-      transmission: "Automatic",
-      image: image7,
-    },
-    {
-      id: "RW-WZD008",
-      vinNumber: "353534542",
-      contactNo: "03401478389",
-      customerName: "Chris Anderson",
-      investor: "Investor D",
-      purchase: 30000,
-      expenses: 567,
-      sale: 42000,
-      profit: 12000,
-      status: "Sold",
-      type: "Luxury",
-      seats: 5,
-      fuel: "Petrol",
-      transmission: "Automatic",
-      image: image8,
-    },
-    {
-      id: "RW-WZD009",
-      vinNumber: "353534543",
-      contactNo: "03401478390",
-      customerName: "Olivia Martin",
-      investor: "Investor E",
-      purchase: 19000,
-      expenses: 567,
-      sale: 27000,
-      profit: 8000,
-      status: "In Stock",
-      type: "Crossover",
-      seats: 5,
-      fuel: "Petrol",
-      transmission: "Automatic",
-      image: image9,
-    },
-  ];
+  const [units, setUnits] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchUnits();
+  }, []);
+
+  const fetchUnits = async () => {
+    try {
+      setLoading(true);
+      const response = await unitsApi.getAll();
+      setUnits(response.data.data.units);
+    } catch (error) {
+      console.error("Error fetching units:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddUnit = () => {
     navigate("/units/add");
   };
 
   const handleViewDetails = (unit) => {
-    navigate(`/units/${unit.id}`);
+    navigate(`/units/${unit._id}`);
   };
 
   const handleEdit = (unit, e) => {
     e.stopPropagation();
-    navigate(`/units/edit/${unit.id}`);
+    navigate(`/units/edit/${unit._id}`); // Assuming frontend route uses :id
   };
 
-  const handleDelete = (unit, e) => {
+  const handleDelete = async (unit, e) => {
     e.stopPropagation();
-    console.log("Delete unit:", unit.id);
+    if (window.confirm("Are you sure you want to delete this unit?")) {
+      try {
+        await unitsApi.delete(unit._id);
+        fetchUnits(); // Refresh list
+      } catch (error) {
+        console.error("Error deleting unit:", error);
+        alert("Failed to delete unit");
+      }
+    }
   };
 
   // Filter units based on search
   const filteredUnits = units.filter(
     (unit) =>
-      unit.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      unit.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      unit.type.toLowerCase().includes(searchTerm.toLowerCase())
+      (unit.customerName && unit.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (unit._id && unit._id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (unit.title && unit.title.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // Calculate pagination
@@ -328,18 +186,19 @@ const Units = () => {
             </div>
           </div>
 
-          {/* View Content */}
-          {viewMode === "table" ? (
+          {loading ? (
+            <div>Loading...</div>
+          ) : viewMode === "table" ? (
             <div className="units-table-container">
               <div className="units-table-responsive">
                 <table className="units-table">
                   <thead>
                     <tr>
-                      <th className="units-table-header">ID</th>
+                      <th className="units-table-header">Title</th>
                       <th className="units-table-header">Vin Number</th>
-                      <th className="units-table-header">Contact No</th>
+                      <th className="units-table-header">Make</th>
                       <th className="units-table-header">Customer Name</th>
-                      <th className="units-table-header">Investor</th>
+                      <th className="units-table-header">Investors</th>
                       <th className="units-table-header">Purchase</th>
                       <th className="units-table-header">Expenses</th>
                       <th className="units-table-header">Sale</th>
@@ -349,20 +208,22 @@ const Units = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedUnits.map((unit) => (
+                    {paginatedUnits.map((unit) => {
+                      const profit = (unit.saleAmount || 0) - (unit.purchaseAmount || 0) - (unit.expenses || 0) - (unit.taxAmount || 0);
+                      return (
                       <tr
-                        key={unit.id}
+                        key={unit._id}
                         className="units-table-row"
                         onClick={() => handleViewDetails(unit)}
                       >
                         <td className="units-table-cell units-unit-id">
-                          {unit.id}
+                          {unit.title}
                         </td>
                         <td className="units-table-cell units-vin-number">
                           {unit.vinNumber}
                         </td>
                         <td className="units-table-cell units-contact-no">
-                          {unit.contactNo}
+                          {unit.make}
                         </td>
                         <td className="units-table-cell">
                           <div className="units-customer-info">
@@ -370,29 +231,27 @@ const Units = () => {
                           </div>
                         </td>
                         <td className="units-table-cell units-investor">
-                          {unit.investor}
+                          {unit.investors && unit.investors.length > 0 ? unit.investors.length : 0}
                         </td>
                         <td className="units-table-cell units-purchase">
-                          ${unit.purchase.toLocaleString()}
+                          ${unit.purchaseAmount?.toLocaleString()}
                         </td>
                         <td className="units-table-cell units-expenses">
-                          ${unit.expenses.toLocaleString()}
+                          ${unit.expenses?.toLocaleString()}
                         </td>
                         <td className="units-table-cell units-sale">
-                          ${unit.sale.toLocaleString()}
+                          ${unit.saleAmount?.toLocaleString()}
                         </td>
                         <td className="units-table-cell units-profit">
-                          ${unit.profit.toLocaleString()}
+                          ${profit.toLocaleString()}
                         </td>
                         <td className="units-table-cell">
                           <span
                             className={`units-status-badge ${
-                              unit.status === "In Stock"
+                              unit.status === "in stock"
                                 ? "units-status-instock"
-                                : unit.status === "Sold"
+                                : unit.status === "sold"
                                 ? "units-status-sold"
-                                : unit.status === "Pending"
-                                ? "units-status-pending"
                                 : "units-status-default"
                             }`}
                           >
@@ -416,7 +275,7 @@ const Units = () => {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                    )})}
                   </tbody>
                 </table>
               </div>
@@ -426,38 +285,29 @@ const Units = () => {
               <div className="units-grid">
                 {paginatedUnits.map((unit) => (
                   <div
-                    key={unit.id}
+                    key={unit._id}
                     className="units-unit-card"
                     onClick={() => handleViewDetails(unit)}
                   >
                     <div className="units-unit-image">
-                      <img src={unit.image} alt={unit.customerName} />
+                      {/* Using a placeholder or first image if available */}
+                      <img src={unit.images && unit.images.length > 0 ? unit.images[0] : "https://placehold.co/600x400?text=No+Image"} alt={unit.title} />
                     </div>
                     <div className="units-unit-content">
                       <div className="units-unit-header-info">
                         <div>
                           <h3 className="units-unit-name">
-                            {unit.customerName}
+                            {unit.title}
                           </h3>
-                          <p className="units-unit-type">{unit.type}</p>
+                          <p className="units-unit-type">{unit.make}</p>
                         </div>
                         <div className="units-unit-price">
-                          ${unit.sale.toLocaleString()}
+                          ${unit.saleAmount?.toLocaleString()}
                         </div>
                       </div>
                       <div className="units-unit-specs">
-                        <div className="units-spec-item">
-                          <MdSpeed />
-                          <span>{unit.transmission}</span>
-                        </div>
-                        <div className="units-spec-item">
-                          <MdEventSeat />
-                          <span>{unit.seats} seats</span>
-                        </div>
-                        <div className="units-spec-item">
-                          <MdLocalGasStation />
-                          <span>{unit.fuel}</span>
-                        </div>
+                        {/* Specs are not in backend model yet, putting placeholders or mapping available fields */}
+                        <span>Vin: {unit.vinNumber}</span>
                       </div>
                       <button
                         className="units-view-details-btn"
@@ -506,37 +356,8 @@ const Units = () => {
                 >
                   Prev
                 </button>
-                {[...Array(totalPages)].map((_, index) => {
-                  const pageNumber = index + 1;
-                  if (
-                    pageNumber === 1 ||
-                    pageNumber === totalPages ||
-                    (pageNumber >= currentPage - 1 &&
-                      pageNumber <= currentPage + 1)
-                  ) {
-                    return (
-                      <button
-                        key={pageNumber}
-                        className={`units-page-btn ${
-                          currentPage === pageNumber ? "units-page-active" : ""
-                        }`}
-                        onClick={() => handlePageChange(pageNumber)}
-                      >
-                        {pageNumber}
-                      </button>
-                    );
-                  } else if (
-                    pageNumber === currentPage - 2 ||
-                    pageNumber === currentPage + 2
-                  ) {
-                    return (
-                      <span key={pageNumber} className="units-page-dots">
-                        ...
-                      </span>
-                    );
-                  }
-                  return null;
-                })}
+                {/* Simplified pagination logic for now */}
+                <span style={{ margin: "0 10px" }}>Page {currentPage} of {totalPages}</span>
                 <button
                   className={`units-page-btn ${
                     currentPage === totalPages ? "units-page-disabled" : ""

@@ -1,31 +1,51 @@
 import { useEffect, useState } from "react";
 import { MdMenu, MdNotifications, MdSearch, MdSettings } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { expensesApi } from "../services/api";
 import "./EditExpense.css";
 
-const EditExpense = ({ existingExpense }) => {
+const EditExpense = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
   const [expenseData, setExpenseData] = useState({
-    date: "12/10/2005",
-    vehicleVin: "HJFWJ563276",
-    expenseType: "Towing",
-    description: "City Transport",
-    amount: "150$",
+    date: "",
+    vehicleVin: "",
+    expenseType: "",
+    description: "",
+    amount: "",
   });
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   // Load existing expense data into state
   useEffect(() => {
-    if (existingExpense) {
-      setExpenseData({
-        date: existingExpense.date || "",
-        vehicleVin: existingExpense.vehicleVin || "",
-        expenseType: existingExpense.expenseType || "",
-        description: existingExpense.description || "",
-        amount: existingExpense.amount || "",
-      });
+    const fetchExpense = async () => {
+      try {
+        setLoading(true);
+        const response = await expensesApi.getOne(id);
+        const data = response.data.data.expense;
+        const formatDate = (dateString) => dateString ? new Date(dateString).toISOString().split('T')[0] : "";
+
+        setExpenseData({
+          date: formatDate(data.date),
+          vehicleVin: data.vehicleVin || "",
+          expenseType: data.expenseType || "",
+          description: data.description || "",
+          amount: data.amount || "",
+        });
+      } catch (error) {
+        console.error("Error fetching expense:", error);
+        alert("Failed to fetch expense details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchExpense();
     }
-  }, [existingExpense]);
+  }, [id]);
 
   const handleExpenseChange = (e) => {
     const { name, value } = e.target;
@@ -35,11 +55,35 @@ const EditExpense = ({ existingExpense }) => {
     }));
   };
 
-  const handleExpenseUpdate = (e) => {
+  const handleExpenseUpdate = async (e) => {
     e.preventDefault();
-    console.log("Expense Updated:", expenseData);
-    // Send API call here to update expense
+    try {
+      const payload = {
+        ...expenseData,
+        amount: Number(expenseData.amount)
+      };
+      await expensesApi.update(id, payload);
+      alert("Expense updated successfully!");
+      navigate("/expenses");
+    } catch (error) {
+      console.error("Error updating expense:", error);
+      alert("Failed to update expense");
+    }
   };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this expense?")) {
+      try {
+        await expensesApi.delete(id);
+        navigate("/expenses");
+      } catch (error) {
+        console.error("Error deleting expense:", error);
+        alert("Failed to delete expense");
+      }
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="editexpense-wrapper">
@@ -90,7 +134,11 @@ const EditExpense = ({ existingExpense }) => {
               <h2 className="editexpense-form-title">Expense Details</h2>
 
               <div className="editexpense-form-actions">
-                <button className="editexpense-remove-btn" type="button">
+                <button 
+                  className="editexpense-remove-btn" 
+                  type="button" 
+                  onClick={handleDelete}
+                >
                   Delete
                 </button>
                 <button
@@ -108,11 +156,12 @@ const EditExpense = ({ existingExpense }) => {
                 <div className="editexpense-field">
                   <label>Date</label>
                   <input
-                    type="text"
+                    type="date"
                     name="date"
                     placeholder="Enter Date"
                     value={expenseData.date}
                     onChange={handleExpenseChange}
+                    required
                   />
                 </div>
 
@@ -124,6 +173,7 @@ const EditExpense = ({ existingExpense }) => {
                     placeholder="Enter Vehicle VIN"
                     value={expenseData.vehicleVin}
                     onChange={handleExpenseChange}
+                    required
                   />
                 </div>
               </div>
@@ -136,11 +186,13 @@ const EditExpense = ({ existingExpense }) => {
                     name="expenseType"
                     value={expenseData.expenseType}
                     onChange={handleExpenseChange}
+                    required
                   >
                     <option value="">Select</option>
                     <option value="Towing">Towing</option>
                     <option value="Repair">Repair</option>
                     <option value="Fuel">Fuel</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
@@ -166,6 +218,7 @@ const EditExpense = ({ existingExpense }) => {
                     placeholder="Enter Amount"
                     value={expenseData.amount}
                     onChange={handleExpenseChange}
+                    required
                   />
                 </div>
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MdDelete,
   MdMenu,
@@ -8,38 +8,92 @@ import {
   MdSearch,
   MdSettings,
 } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { investorsApi } from "../services/api";
 import "./EditInvestor.css";
 
 const EditInvestor = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [formData, setFormData] = useState({
-    investorId: "#3d5345",
-    investorName: "John",
-    contactNo: "03401476382",
-    email: "abc1234@gmail.com",
-    joinDate: "2021-03-12",
+    investorId: "",
+    name: "",
+    contactNo: "",
+    email: "",
+    joinDate: "",
     status: "active",
-    initialInvestment: "32428",
-    profitShare: "5",
+    initialInvestment: "",
+    profitShare: "",
   });
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchInvestor = async () => {
+      try {
+        setLoading(true);
+        const response = await investorsApi.getOne(id);
+        const data = response.data.data.investor;
+        const formatDate = (dateString) => dateString ? new Date(dateString).toISOString().split('T')[0] : "";
+
+        setFormData({
+          investorId: data.investorId || "",
+          name: data.name || "",
+          contactNo: data.contactNo || "",
+          email: data.email || "",
+          joinDate: formatDate(data.joinDate),
+          status: data.status || "active",
+          initialInvestment: data.initialInvestment || "",
+          profitShare: data.profitShare || "",
+        });
+      } catch (error) {
+        console.error("Error fetching investor:", error);
+        alert("Failed to fetch investor details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchInvestor();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add your form submission logic here
-  };
-
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this investor?")) {
-      console.log("Delete investor:", formData.investorId);
-      // Add your delete logic here
+    try {
+      const payload = {
+        ...formData,
+        initialInvestment: Number(formData.initialInvestment),
+        profitShare: Number(formData.profitShare)
+      };
+      await investorsApi.update(id, payload);
+      alert("Investor updated successfully!");
+      navigate("/investors");
+    } catch (error) {
+      console.error("Error updating investor:", error);
+      alert("Failed to update investor");
     }
   };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this investor?")) {
+      try {
+        await investorsApi.delete(id);
+        navigate("/investors");
+      } catch (error) {
+        console.error("Error deleting investor:", error);
+        alert("Failed to delete investor");
+      }
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="editinvestor-wrapper">
@@ -143,9 +197,9 @@ const EditInvestor = () => {
                     </label>
                     <input
                       type="text"
-                      name="investorName"
+                      name="name"
                       className="editinvestor-form-input"
-                      value={formData.investorName}
+                      value={formData.name}
                       onChange={handleChange}
                       required
                     />

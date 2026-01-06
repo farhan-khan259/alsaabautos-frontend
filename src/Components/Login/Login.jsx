@@ -1,16 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../Assets/Pictures/logo.png";
+import { authApi } from "../services/api";
 import "./Login.css";
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin();
+    setError("");
+    setLoading(true);
+    try {
+      const response = await authApi.login({ email, password });
+      const { token, data } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,6 +44,8 @@ const Login = ({ onLogin }) => {
         <h2 className="login-title">
           Cars Purchasing And Sales Management System
         </h2>
+
+        {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -52,8 +72,8 @@ const Login = ({ onLogin }) => {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary login-btn">
-            Login
+          <button type="submit" className="btn btn-primary login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

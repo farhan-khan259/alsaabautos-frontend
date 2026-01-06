@@ -8,7 +8,9 @@ import {
   MdSearch,
   MdSettings,
 } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { reportsApi } from "../services/api";
 import "./AddReport.css";
 
 const AddReport = () => {
@@ -20,6 +22,8 @@ const AddReport = () => {
     purchasePrice: "",
     salesPrice: "",
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [investorData, setInvestorData] = useState({
     investor1: { name: "", profit: "" },
@@ -56,18 +60,41 @@ const AddReport = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const submissionData = {
-      ...formData,
-      investors: Object.keys(investorData).reduce((acc, key) => {
+    setLoading(true);
+    try {
+      // Transform investorData object to array
+      const investorsArray = Object.keys(investorData).reduce((acc, key) => {
         if (parseInt(key.replace("investor", "")) <= investors) {
-          acc[key] = investorData[key];
+          const inv = investorData[key];
+          if (inv.name && inv.profit) {
+            acc.push({
+              name: inv.name,
+              profit: Number(inv.profit)
+            });
+          }
         }
         return acc;
-      }, {}),
-    };
-    console.log("Submitted Data:", submissionData);
+      }, []);
+
+      const payload = {
+        ...formData,
+        purchasePrice: Number(formData.purchasePrice),
+        salesPrice: Number(formData.salesPrice),
+        netProfit: Number(formData.salesPrice) - Number(formData.purchasePrice), // Calculate net profit
+        investors: investorsArray,
+      };
+
+      await reportsApi.create(payload);
+      alert("Report added successfully!");
+      navigate("/pl");
+    } catch (error) {
+      console.error("Error creating report:", error);
+      alert("Failed to add report");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -119,9 +146,13 @@ const AddReport = () => {
               <h2 className="addreport-form-title">Details</h2>
 
               <div className="addreport-form-header-actions">
-                <button className="addreport-remove-btn">Remove</button>
-                <button className="addreport-save-btn" onClick={handleSubmit}>
-                  Save
+                <button className="addreport-remove-btn" type="button" onClick={() => navigate("/pl")}>Cancel</button>
+                <button 
+                  className="addreport-save-btn" 
+                  onClick={handleSubmit}
+                  disabled={loading}
+                >
+                  {loading ? "Saving..." : "Save"}
                 </button>
               </div>
             </div>
@@ -137,6 +168,7 @@ const AddReport = () => {
                     placeholder="Enter Id"
                     value={formData.carId}
                     onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -148,6 +180,7 @@ const AddReport = () => {
                     placeholder="Enter Name"
                     value={formData.customerName}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
@@ -343,6 +376,7 @@ const AddReport = () => {
                     onChange={handleChange}
                     min="0"
                     step="0.01"
+                    required
                   />
                 </div>
 
@@ -356,6 +390,7 @@ const AddReport = () => {
                     onChange={handleChange}
                     min="0"
                     step="0.01"
+                    required
                   />
                 </div>
               </div>

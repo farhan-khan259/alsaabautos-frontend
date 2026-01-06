@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { MdMenu, MdNotifications, MdSearch, MdSettings } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { expensesApi } from "../services/api";
 import "./AddExpense.css";
 
 const AddExpense = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [expenseData, setExpenseData] = useState({
     date: "",
@@ -22,10 +26,23 @@ const AddExpense = () => {
     }));
   };
 
-  const handleExpenseSubmit = (e) => {
+  const handleExpenseSubmit = async (e) => {
     e.preventDefault();
-    console.log("Expense Submitted:", expenseData);
-    // You can add API call here to send expenseData
+    setLoading(true);
+    try {
+      const payload = {
+        ...expenseData,
+        amount: Number(expenseData.amount)
+      };
+      await expensesApi.create(payload);
+      alert("Expense added successfully!");
+      navigate("/expenses");
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      alert("Failed to add expense");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,14 +92,15 @@ const AddExpense = () => {
               <h2 className="addexpense-form-title">Details</h2>
 
               <div className="addexpense-form-actions">
-                <button className="addexpense-remove-btn" type="button">
-                  Remove
+                <button className="addexpense-remove-btn" type="button" onClick={() => navigate("/expenses")}>
+                  Cancel
                 </button>
                 <button
                   className="addexpense-save-btn"
                   onClick={handleExpenseSubmit}
+                  disabled={loading}
                 >
-                  Save
+                  {loading ? "Saving..." : "Save"}
                 </button>
               </div>
             </div>
@@ -93,11 +111,12 @@ const AddExpense = () => {
                 <div className="addexpense-field">
                   <label>Date</label>
                   <input
-                    type="text"
+                    type="date"
                     name="date"
                     placeholder="Enter Date"
                     value={expenseData.date}
                     onChange={handleExpenseChange}
+                    required
                   />
                 </div>
 
@@ -109,6 +128,7 @@ const AddExpense = () => {
                     placeholder="Enter Vehicle VIN"
                     value={expenseData.vehicleVin}
                     onChange={handleExpenseChange}
+                    required
                   />
                 </div>
               </div>
@@ -121,11 +141,13 @@ const AddExpense = () => {
                     name="expenseType"
                     value={expenseData.expenseType}
                     onChange={handleExpenseChange}
+                    required
                   >
                     <option value="">Select</option>
-                    <option value="A">Towing</option>
-                    <option value="B"> Repair</option>
-                    <option value="C"> Fuel</option>
+                    <option value="Towing">Towing</option>
+                    <option value="Repair"> Repair</option>
+                    <option value="Fuel"> Fuel</option>
+                    <option value="Other"> Other</option>
                   </select>
                 </div>
 
@@ -151,6 +173,7 @@ const AddExpense = () => {
                     placeholder="Enter Amount"
                     value={expenseData.amount}
                     onChange={handleExpenseChange}
+                    required
                   />
                 </div>
               </div>

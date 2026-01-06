@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MdAdd,
   MdAttachMoney,
@@ -14,45 +14,41 @@ import {
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { paymentsApi, investorsApi } from "../services/api";
 import "./Payments.css";
 
 const Payments = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [selectedInvestor, setSelectedInvestor] = useState("investor-1");
-  const [investors, setInvestors] = useState([
-    { id: "investor-1", name: "Investor 1" },
-  ]);
+  const [selectedInvestor, setSelectedInvestor] = useState("");
+  const [investors, setInvestors] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    paymentAmount: "",
-    paymentSource: "",
+    amount: "",
+    source: "",
     method: "",
-    paymentDate: "",
+    date: "",
     remarks: "",
     lotNumber: "",
   });
 
   const navigate = useNavigate();
 
-  const investorData = {
-    "investor-1": {
-      name: "Investor 1",
-      initialInvestment: 4,
-      accumulatedProfit: 4,
-      currentBalance: 45890,
-    },
-  };
-
-  const handleAddInvestor = () => {
-    const newInvestorNumber = investors.length + 1;
-    setInvestors([
-      ...investors,
-      {
-        id: `investor-${newInvestorNumber}`,
-        name: `Investor ${newInvestorNumber}`,
-      },
-    ]);
-  };
+  useEffect(() => {
+    const fetchInvestors = async () => {
+      try {
+        const response = await investorsApi.getAll();
+        const data = response.data.data.investors;
+        setInvestors(data);
+        if (data.length > 0) {
+          setSelectedInvestor(data[0]._id);
+        }
+      } catch (error) {
+        console.error("Error fetching investors:", error);
+      }
+    };
+    fetchInvestors();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,19 +58,35 @@ const Payments = () => {
     }));
   };
 
-  const handleSavePayment = () => {
-    console.log("Payment saved:", {
-      investor: selectedInvestor,
-      ...formData,
-    });
-    alert("Payment saved successfully!");
+  const handleSavePayment = async () => {
+    if (!selectedInvestor) {
+      alert("Please select an investor");
+      return;
+    }
+    setLoading(true);
+    try {
+      const selectedInv = investors.find(inv => inv._id === selectedInvestor);
+      const payload = {
+        ...formData,
+        investor: selectedInv ? selectedInv.name : "Unknown", // Backend model stores name or ID? frontend shows ID was stored, but displaying name. Let's store name for now based on previous code, or better ID if backend supports relation. Backend model has investor: String (required). I'll send name to match visual.
+        amount: Number(formData.amount)
+      };
+      await paymentsApi.create(payload);
+      alert("Payment saved successfully!");
+      navigate("/payments/history");
+    } catch (error) {
+      console.error("Error saving payment:", error);
+      alert("Failed to save payment");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleViewHistory = () => {
     navigate("/payments/history");
   };
 
-  const currentInvestor = investorData[selectedInvestor];
+  const currentInvestor = investors.find(inv => inv._id === selectedInvestor);
 
   return (
     <div className="payments-wrapper">
@@ -85,8 +97,7 @@ const Payments = () => {
           sidebarOpen ? "payments-sidebar-open" : "payments-sidebar-closed"
         }`}
       >
-        {/* Header - Updated to match Payment History */}
-        {/* Header - Updated to match Payment History */}
+        {/* Header */}
         <header className="payments-header">
           <div className="payments-header-left">
             <button
@@ -135,8 +146,9 @@ const Payments = () => {
                 <button
                   className="payments-action-btn payments-action-primary"
                   onClick={handleSavePayment}
+                  disabled={loading}
                 >
-                  <span>Save Payment</span>
+                  <span>{loading ? "Saving..." : "Save Payment"}</span>
                 </button>
               </div>
             </div>
@@ -144,33 +156,24 @@ const Payments = () => {
             <div className="payments-investor-content">
               <div className="payments-investor-selector">
                 <div className="payments-dynamic-investors">
-                  {investors.map((investor, index) => (
-                    <div key={investor.id} className="payments-form-group">
-                      <label className="payments-form-label">
-                        Investor {index + 1} Name
-                      </label>
-                      <input
-                        type="text"
-                        value={investor.name}
-                        onChange={(e) => {
-                          const updated = [...investors];
-                          updated[index].name = e.target.value;
-                          setInvestors(updated);
-                        }}
-                        className="payments-form-input"
-                        placeholder="Enter investor name"
-                      />
-                    </div>
-                  ))}
+                  <div className="payments-form-group">
+                    <label className="payments-form-label">
+                      Investor Name
+                    </label>
+                    <select
+                      value={selectedInvestor}
+                      onChange={(e) => setSelectedInvestor(e.target.value)}
+                      className="payments-form-select"
+                    >
+                      <option value="">Select Investor</option>
+                      {investors.map((investor) => (
+                        <option key={investor._id} value={investor._id}>
+                          {investor.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-
-                <button
-                  className="payments-btn payments-btn-add"
-                  onClick={handleAddInvestor}
-                >
-                  <MdAdd />
-                  <span>Add Another Investor</span>
-                </button>
               </div>
 
               {/* Stats Cards */}
@@ -182,7 +185,7 @@ const Payments = () => {
                   <div className="payments-stat-content">
                     <p className="payments-stat-label">Initial Investment</p>
                     <p className="payments-stat-value">
-                      ${currentInvestor?.initialInvestment}
+                      ${currentInvestor?.initialInvestment?.toLocaleString() || 0}
                     </p>
                   </div>
                 </div>
@@ -192,9 +195,9 @@ const Payments = () => {
                     <MdTrendingUp />
                   </div>
                   <div className="payments-stat-content">
-                    <p className="payments-stat-label">Accumulated Profit</p>
+                    <p className="payments-stat-label">Profit Share</p>
                     <p className="payments-stat-value">
-                      ${currentInvestor?.accumulatedProfit}
+                      {currentInvestor?.profitShare || 0}%
                     </p>
                   </div>
                 </div>
@@ -206,7 +209,7 @@ const Payments = () => {
                   <div className="payments-stat-content">
                     <p className="payments-stat-label">Current Balance</p>
                     <p className="payments-stat-value">
-                      ${currentInvestor?.currentBalance?.toLocaleString()}
+                      ${currentInvestor?.currentBalance?.toLocaleString() || 0}
                     </p>
                   </div>
                 </div>
@@ -224,10 +227,10 @@ const Payments = () => {
                 <div className="payments-form-group">
                   <label className="payments-form-label">Payment Amount</label>
                   <input
-                    type="text"
-                    name="paymentAmount"
+                    type="number"
+                    name="amount"
                     placeholder="Enter Amount"
-                    value={formData.paymentAmount}
+                    value={formData.amount}
                     onChange={handleInputChange}
                     className="payments-form-input"
                   />
@@ -242,9 +245,11 @@ const Payments = () => {
                     className="payments-form-select"
                   >
                     <option value="">Select</option>
-                    <option value="bank-transfer">Bank Transfer</option>
-                    <option value="check">Check</option>
-                    <option value="wire">Wire Transfer</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Check">Check</option>
+                    <option value="Wire Transfer">Wire Transfer</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Online Payment">Online Payment</option>
                   </select>
                 </div>
 
@@ -266,15 +271,15 @@ const Payments = () => {
                 <div className="payments-form-group">
                   <label className="payments-form-label">Payment Source</label>
                   <select
-                    name="paymentSource"
-                    value={formData.paymentSource}
+                    name="source"
+                    value={formData.source}
                     onChange={handleInputChange}
                     className="payments-form-select"
                   >
                     <option value="">Select</option>
-                    <option value="account-1">Account 1</option>
-                    <option value="account-2">Account 2</option>
-                    <option value="account-3">Account 3</option>
+                    <option value="Investment">Investment</option>
+                    <option value="Profit">Profit</option>
+                    <option value="Withdrawal">Withdrawal</option>
                   </select>
                 </div>
 
@@ -282,8 +287,8 @@ const Payments = () => {
                   <label className="payments-form-label">Payment Date</label>
                   <input
                     type="date"
-                    name="paymentDate"
-                    value={formData.paymentDate}
+                    name="date"
+                    value={formData.date}
                     onChange={handleInputChange}
                     className="payments-form-input"
                   />

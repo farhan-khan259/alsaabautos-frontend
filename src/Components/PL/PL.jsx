@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   MdAdd,
@@ -12,51 +12,35 @@ import {
   MdSettings,
 } from "react-icons/md";
 import Sidebar from "../Sidebar/Sidebar";
+import { reportsApi } from "../services/api";
 import "./PL.css";
 
 const PL = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sample data for the table
-  const plData = [
-    {
-      id: "101",
-      customerName: "Mongal Trader",
-      investor: "Ustman, Adeel/Farhan",
-      purchase: 50008,
-      sale: 72005,
-      netProfit: 18005,
-      investorProfit: 4505,
-    },
-    {
-      id: "102",
-      customerName: "ABC Corporation",
-      investor: "Investor X, Investor Y",
-      purchase: 45000,
-      sale: 65000,
-      netProfit: 20000,
-      investorProfit: 5000,
-    },
-    {
-      id: "103",
-      customerName: "XYZ Enterprises",
-      investor: "Smith, Johnson",
-      purchase: 60000,
-      sale: 85000,
-      netProfit: 25000,
-      investorProfit: 6250,
-    },
-    {
-      id: "104",
-      customerName: "Global Traders",
-      investor: "Wilson, Brown",
-      purchase: 55000,
-      sale: 78000,
-      netProfit: 23000,
-      investorProfit: 5750,
-    },
-  ];
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const response = await reportsApi.getAll();
+      setReports(response.data.data.reports);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredReports = reports.filter(report => 
+    (report.customerName && report.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (report.carId && report.carId.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <div className="pl-wrapper">
@@ -157,26 +141,30 @@ const PL = () => {
             </div>
           </div>
 
-          {/* Stats Cards */}
+          {/* Stats Cards - These could also be dynamic later */}
           <div className="pl-stats-section">
             <div className="pl-stats-card pl-notes-card">
               <h3 className="pl-stats-title">TOTAL SALE</h3>
               <div className="pl-stats-content">
-                <div className="pl-stats-value">$13000</div>
+                <div className="pl-stats-value">
+                  ${reports.reduce((acc, curr) => acc + (curr.salesPrice || 0), 0).toLocaleString()}
+                </div>
               </div>
             </div>
 
             <div className="pl-stats-card pl-profit-card">
               <h3 className="pl-stats-title">Total Profit</h3>
               <div className="pl-stats-content">
-                <div className="pl-stats-value">$3100</div>
+                <div className="pl-stats-value">
+                  ${reports.reduce((acc, curr) => acc + (curr.netProfit || 0), 0).toLocaleString()}
+                </div>
               </div>
             </div>
 
             <div className="pl-stats-card pl-investor-card">
               <h3 className="pl-stats-title">Active Investor</h3>
               <div className="pl-stats-content">
-                <div className="pl-stats-value">06</div>
+                <div className="pl-stats-value">--</div> 
               </div>
             </div>
           </div>
@@ -187,38 +175,44 @@ const PL = () => {
               <h2 className="pl-section-title">P&L</h2>
             </div>
             <div className="pl-table-container">
-              <table className="pl-table">
-                <thead>
-                  <tr>
-                    <th>Car ID</th>
-                    <th>Customer Name</th>
-                    <th>Investor</th>
-                    <th>Purchase</th>
-                    <th>Sale</th>
-                    <th>Net Profit</th>
-                    <th>Investor Profit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {plData.map((item) => (
-                    <tr key={item.id}>
-                      <td className="pl-can-id">{item.id}</td>
-                      <td className="pl-customer-name">{item.customerName}</td>
-                      <td className="pl-investor">{item.investor}</td>
-                      <td className="pl-purchase">
-                        ${item.purchase.toLocaleString()}
-                      </td>
-                      <td className="pl-sale">${item.sale.toLocaleString()}</td>
-                      <td className="pl-net-profit">
-                        ${item.netProfit.toLocaleString()}
-                      </td>
-                      <td className="pl-investor-profit">
-                        ${item.investorProfit.toLocaleString()}
-                      </td>
+              {loading ? (
+                <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+              ) : (
+                <table className="pl-table">
+                  <thead>
+                    <tr>
+                      <th>Car ID</th>
+                      <th>Customer Name</th>
+                      <th>Investor</th>
+                      <th>Purchase</th>
+                      <th>Sale</th>
+                      <th>Net Profit</th>
+                      <th>Investor Profit</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredReports.map((item) => (
+                      <tr key={item._id}>
+                        <td className="pl-can-id">{item.carId}</td>
+                        <td className="pl-customer-name">{item.customerName}</td>
+                        <td className="pl-investor">
+                          {item.investors?.map(inv => inv.name).join(', ')}
+                        </td>
+                        <td className="pl-purchase">
+                          ${item.purchasePrice?.toLocaleString()}
+                        </td>
+                        <td className="pl-sale">${item.salesPrice?.toLocaleString()}</td>
+                        <td className="pl-net-profit">
+                          ${item.netProfit?.toLocaleString()}
+                        </td>
+                        <td className="pl-investor-profit">
+                          ${item.investors?.reduce((acc, curr) => acc + (curr.profit || 0), 0).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 

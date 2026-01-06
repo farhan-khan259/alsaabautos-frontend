@@ -8,7 +8,9 @@ import {
   MdSettings,
   MdUpload,
 } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { unitsApi } from "../services/api";
 import "./AddUnit.css";
 
 const AddUnit = () => {
@@ -32,6 +34,8 @@ const AddUnit = () => {
     status: "",
     investors: [""],
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleInvestorChange = (index, value) => {
     const updatedInvestors = [...formData.investors];
@@ -50,9 +54,32 @@ const AddUnit = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setLoading(true);
+    try {
+      // Map form data to backend expected format if needed
+      // Current model expects: title, make, number, quantity, customerName, vinNumber, lotNumber, purchaseAuction, purchaseAmount, expenses, purchaseDate, taxAmount, saleAuction, saleAmount, saleDate, status, investors
+      const payload = {
+        ...formData,
+        quantity: Number(formData.quantity),
+        purchaseAmount: Number(formData.purchaseAmount),
+        expenses: Number(formData.expenses),
+        taxAmount: Number(formData.taxAmount),
+        saleAmount: Number(formData.saleAmount),
+        // Filter out empty investor strings
+        investors: formData.investors.filter(inv => inv.trim() !== "")
+      };
+
+      await unitsApi.create(payload);
+      alert("Unit added successfully!");
+      navigate("/units");
+    } catch (error) {
+      console.error("Error adding unit:", error);
+      alert("Failed to add unit. Please check your inputs.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -128,10 +155,10 @@ const AddUnit = () => {
                   className="addunit-btn-remove"
                   onClick={handleReset}
                 >
-                  Remove
+                  Reset
                 </button>
-                <button type="submit" className="addunit-btn-add">
-                  Add Unit
+                <button type="submit" className="addunit-btn-add" disabled={loading}>
+                  {loading ? "Adding..." : "Add Unit"}
                 </button>
               </div>
 
@@ -164,6 +191,7 @@ const AddUnit = () => {
                       <option value="sold">Sold</option>
                       <option value="maintenance">Maintenance</option>
                       <option value="reserved">Reserved</option>
+                      <option value="in stock">In Stock</option>
                     </select>
                   </div>
                   <div className="addunit-form-group">
@@ -401,19 +429,16 @@ const AddUnit = () => {
                       <label className="addunit-form-label">
                         Investor {index + 1}
                       </label>
-                      <select
+                      {/* You might want to fetch the list of investors from backend to populate this select */}
+                      <input
+                        type="text" 
                         value={investor}
                         onChange={(e) =>
                           handleInvestorChange(index, e.target.value)
                         }
-                        className="addunit-form-select"
-                      >
-                        <option value="">Select</option>
-                        <option value="investor1">Investor 1</option>
-                        <option value="investor2">Investor 2</option>
-                        <option value="investor3">Investor 3</option>
-                        <option value="investor4">Investor 4</option>
-                      </select>
+                        className="addunit-form-input"
+                        placeholder="Enter Investor Name"
+                      />
                     </div>
                   ))}
                 </div>

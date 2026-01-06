@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MdDirectionsCar,
   MdAttachMoney,
@@ -12,61 +12,145 @@ import {
   MdNotifications,
 } from "react-icons/md";
 import Sidebar from "../Sidebar/Sidebar";
+import { unitsApi, expensesApi, reportsApi, investorsApi } from "../services/api";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  const stats = [
+  const [stats, setStats] = useState([
     {
       title: "Total Cars",
-      value: "89 Cars",
+      value: "Loading...",
       icon: <MdDirectionsCar />,
       color: "#3b82f6",
     },
     {
-      title: "Cars Sold (MTD)",
-      value: "18",
+      title: "Cars Sold",
+      value: "Loading...",
       icon: <MdDirectionsCar />,
       color: "#10b981",
     },
     {
       title: "Total Profit",
-      value: "$19,200",
+      value: "Loading...",
       icon: <MdAttachMoney />,
       color: "#f59e0b",
     },
     {
       title: "Expenses",
-      value: "$2,500",
+      value: "Loading...",
       icon: <MdReceipt />,
       color: "#ef4444",
     },
     {
       title: "Car In Stock",
-      value: "7",
+      value: "Loading...",
       icon: <MdDirectionsCar />,
       color: "#8b5cf6",
     },
     {
       title: "Total Tax",
-      value: "$800",
+      value: "Loading...",
       icon: <MdAttachMoney />,
       color: "#06b6d4",
     },
     {
       title: "Total Investor",
-      value: "4",
+      value: "Loading...",
       icon: <MdPeople />,
       color: "#ec4899",
     },
     {
       title: "Total Investment",
-      value: "$45,890",
+      value: "Loading...",
       icon: <MdAttachMoney />,
       color: "#14b8a6",
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [unitsRes, expensesRes, reportsRes, investorsRes] = await Promise.all([
+          unitsApi.getAll(),
+          expensesApi.getAll(),
+          reportsApi.getAll(),
+          investorsApi.getAll()
+        ]);
+
+        const units = unitsRes.data.data.units;
+        const expensesList = expensesRes.data.data.expenses;
+        const reports = reportsRes.data.data.reports;
+        const investors = investorsRes.data.data.investors;
+
+        // Calculate Stats
+        const totalCars = units.length;
+        const carsSold = units.filter(u => u.status && u.status.toLowerCase() === 'sold').length;
+        const carsInStock = units.filter(u => u.status && u.status.toLowerCase() === 'in stock').length;
+        const totalProfit = reports.reduce((acc, curr) => acc + (curr.netProfit || 0), 0);
+        const totalExpenses = expensesList.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+        const totalTax = units.reduce((acc, curr) => acc + (curr.taxAmount || 0), 0);
+        const totalInvestors = investors.length;
+        const totalInvestment = investors.reduce((acc, curr) => acc + (curr.initialInvestment || 0), 0);
+
+        setStats([
+          {
+            title: "Total Cars",
+            value: `${totalCars} Cars`,
+            icon: <MdDirectionsCar />,
+            color: "#3b82f6",
+          },
+          {
+            title: "Cars Sold",
+            value: `${carsSold}`,
+            icon: <MdDirectionsCar />,
+            color: "#10b981",
+          },
+          {
+            title: "Total Profit",
+            value: `$${totalProfit.toLocaleString()}`,
+            icon: <MdAttachMoney />,
+            color: "#f59e0b",
+          },
+          {
+            title: "Expenses",
+            value: `$${totalExpenses.toLocaleString()}`,
+            icon: <MdReceipt />,
+            color: "#ef4444",
+          },
+          {
+            title: "Car In Stock",
+            value: `${carsInStock}`,
+            icon: <MdDirectionsCar />,
+            color: "#8b5cf6",
+          },
+          {
+            title: "Total Tax",
+            value: `$${totalTax.toLocaleString()}`,
+            icon: <MdAttachMoney />,
+            color: "#06b6d4",
+          },
+          {
+            title: "Total Investor",
+            value: `${totalInvestors}`,
+            icon: <MdPeople />,
+            color: "#ec4899",
+          },
+          {
+            title: "Total Investment",
+            value: `$${totalInvestment.toLocaleString()}`,
+            icon: <MdAttachMoney />,
+            color: "#14b8a6",
+          },
+        ]);
+
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="dashboard-wrapper">

@@ -8,56 +8,123 @@ import {
   MdSettings,
   MdUpload,
 } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { unitsApi } from "../services/api";
 import "./EditUnit.css";
 
 const EditUnit = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [formData, setFormData] = useState({
-    title: "Toyota Camry 2023",
-    make: "toyota",
-    number: "TX1234",
-    customerName: "John Doe",
-    quantity: "1",
-    vinNumber: "1HGCM82633A123456",
-    lotNumber: "LOT7890",
-    purchaseAuction: "auction1",
-    purchaseAmount: "25000",
-    expenses: "1500",
-    purchaseDate: "2023-10-15",
-    taxAmount: "1500",
-    saleAuction: "auction2",
-    saleAmount: "32000",
-    saleDate: "2023-12-20",
-    status: "sold",
-    investor1: "investor1",
-    investor2: "investor2",
-    investor3: "",
-    investor4: "",
+    title: "",
+    make: "",
+    number: "",
+    customerName: "",
+    quantity: "",
+    vinNumber: "",
+    lotNumber: "",
+    purchaseAuction: "",
+    purchaseAmount: "",
+    expenses: "",
+    purchaseDate: "",
+    taxAmount: "",
+    saleAuction: "",
+    saleAmount: "",
+    saleDate: "",
+    status: "",
+    investors: [],
   });
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Simulate fetching data on component mount
   useEffect(() => {
-    console.log("Fetching unit data...");
-    // In a real app, you would fetch data from an API
-  }, []);
+    const fetchUnit = async () => {
+      try {
+        setLoading(true);
+        const response = await unitsApi.getOne(id);
+        const data = response.data.data.unit;
+        // Format dates for input type="date"
+        const formatDate = (dateString) => dateString ? new Date(dateString).toISOString().split('T')[0] : "";
+        
+        setFormData({
+          title: data.title || "",
+          make: data.make || "",
+          number: data.number || "",
+          customerName: data.customerName || "",
+          quantity: data.quantity || "",
+          vinNumber: data.vinNumber || "",
+          lotNumber: data.lotNumber || "",
+          purchaseAuction: data.purchaseAuction || "",
+          purchaseAmount: data.purchaseAmount || "",
+          expenses: data.expenses || "",
+          purchaseDate: formatDate(data.purchaseDate),
+          taxAmount: data.taxAmount || "",
+          saleAuction: data.saleAuction || "",
+          saleAmount: data.saleAmount || "",
+          saleDate: formatDate(data.saleDate),
+          status: data.status || "",
+          investors: data.investors || [],
+        });
+      } catch (error) {
+        console.error("Error fetching unit:", error);
+        alert("Failed to fetch unit details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchUnit();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleInvestorChange = (index, value) => {
+    const updatedInvestors = [...formData.investors];
+    updatedInvestors[index] = value;
+    setFormData({ ...formData, investors: updatedInvestors });
+  };
+
+  const addInvestor = () => {
+    setFormData({
+      ...formData,
+      investors: [...formData.investors, ""],
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted for update:", formData);
-    alert("Unit updated successfully!");
+    try {
+      const payload = {
+        ...formData,
+        quantity: Number(formData.quantity),
+        purchaseAmount: Number(formData.purchaseAmount),
+        expenses: Number(formData.expenses),
+        taxAmount: Number(formData.taxAmount),
+        saleAmount: Number(formData.saleAmount),
+        investors: formData.investors.filter(inv => inv.trim() !== "")
+      };
+      
+      await unitsApi.update(id, payload);
+      alert("Unit updated successfully!");
+      navigate("/units");
+    } catch (error) {
+      console.error("Error updating unit:", error);
+      alert("Failed to update unit");
+    }
   };
 
   const handleDiscard = () => {
     if (window.confirm("Are you sure you want to discard all changes?")) {
-      console.log("Changes discarded");
-      window.location.reload();
+      navigate("/units");
     }
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="editunit-wrapper">
@@ -150,6 +217,7 @@ const EditUnit = () => {
                       <option value="sold">Sold</option>
                       <option value="maintenance">Maintenance</option>
                       <option value="reserved">Reserved</option>
+                      <option value="in stock">In Stock</option>
                     </select>
                   </div>
                   <div className="editunit-form-group">
@@ -385,67 +453,32 @@ const EditUnit = () => {
               <div className="editunit-form-section">
                 <h2 className="editunit-section-heading">Investor Details</h2>
                 <div className="editunit-form-grid">
-                  <div className="editunit-form-group">
-                    <label className="editunit-form-label">Investor 1</label>
-                    <select
-                      name="investor1"
-                      value={formData.investor1}
-                      onChange={handleChange}
-                      className="editunit-form-select"
-                    >
-                      <option value="">Select</option>
-                      <option value="investor1">Investor 1</option>
-                      <option value="investor2">Investor 2</option>
-                      <option value="investor3">Investor 3</option>
-                      <option value="investor4">Investor 4</option>
-                    </select>
-                  </div>
-                  <div className="editunit-form-group">
-                    <label className="editunit-form-label">Investor 2</label>
-                    <select
-                      name="investor2"
-                      value={formData.investor2}
-                      onChange={handleChange}
-                      className="editunit-form-select"
-                    >
-                      <option value="">Select</option>
-                      <option value="investor1">Investor 1</option>
-                      <option value="investor2">Investor 2</option>
-                      <option value="investor3">Investor 3</option>
-                      <option value="investor4">Investor 4</option>
-                    </select>
-                  </div>
-                  <div className="editunit-form-group">
-                    <label className="editunit-form-label">Investor 3</label>
-                    <select
-                      name="investor3"
-                      value={formData.investor3}
-                      onChange={handleChange}
-                      className="editunit-form-select"
-                    >
-                      <option value="">Select</option>
-                      <option value="investor1">Investor 1</option>
-                      <option value="investor2">Investor 2</option>
-                      <option value="investor3">Investor 3</option>
-                      <option value="investor4">Investor 4</option>
-                    </select>
-                  </div>
-                  <div className="editunit-form-group">
-                    <label className="editunit-form-label">Investor 4</label>
-                    <select
-                      name="investor4"
-                      value={formData.investor4}
-                      onChange={handleChange}
-                      className="editunit-form-select"
-                    >
-                      <option value="">Select</option>
-                      <option value="investor1">Investor 1</option>
-                      <option value="investor2">Investor 2</option>
-                      <option value="investor3">Investor 3</option>
-                      <option value="investor4">Investor 4</option>
-                    </select>
-                  </div>
+                  {formData.investors.map((investor, index) => (
+                    <div className="editunit-form-group" key={index}>
+                      <label className="editunit-form-label">
+                        Investor {index + 1}
+                      </label>
+                      <input
+                        type="text"
+                        value={investor}
+                        onChange={(e) =>
+                          handleInvestorChange(index, e.target.value)
+                        }
+                        className="editunit-form-input"
+                        placeholder="Enter Investor Name"
+                      />
+                    </div>
+                  ))}
                 </div>
+                
+                <button
+                  type="button"
+                  className="addunit-add-investor-btn"
+                  onClick={addInvestor}
+                  style={{marginTop: '10px'}}
+                >
+                  Add Another Investor
+                </button>
               </div>
             </form>
           </div>

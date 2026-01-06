@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdArrowUpward,
   MdDelete,
@@ -11,114 +11,14 @@ import {
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { investorsApi } from "../services/api";
 import "./Investors.css";
 
 const Investors = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const investorsData = [
-    {
-      id: "INV-WZ1001",
-      name: "Kyle Thompson",
-      contact: "03401476382",
-      initialInvestment: "$320",
-      currentBalance: "$834",
-      joinDate: "12/06/2023",
-      share: "10%",
-      status: "Active",
-    },
-    {
-      id: "INV-WZ1002",
-      name: "Sarah Johnson",
-      contact: "03401476383",
-      initialInvestment: "$500",
-      currentBalance: "$1,200",
-      joinDate: "15/06/2023",
-      share: "15%",
-      status: "In Active",
-    },
-    {
-      id: "INV-WZ1003",
-      name: "Michael Chen",
-      contact: "03401476384",
-      initialInvestment: "$750",
-      currentBalance: "$1,850",
-      joinDate: "20/06/2023",
-      share: "12%",
-      status: "Active",
-    },
-    {
-      id: "INV-WZ1004",
-      name: "Emma Wilson",
-      contact: "03401476385",
-      initialInvestment: "$420",
-      currentBalance: "$980",
-      joinDate: "25/06/2023",
-      share: "8%",
-      status: "Active",
-    },
-    {
-      id: "INV-WZ1005",
-      name: "David Brown",
-      contact: "03401476386",
-      initialInvestment: "$600",
-      currentBalance: "$1,450",
-      joinDate: "30/06/2023",
-      share: "18%",
-      status: "In Active",
-    },
-    {
-      id: "INV-WZ1006",
-      name: "Lisa Martinez",
-      contact: "03401476387",
-      initialInvestment: "$280",
-      currentBalance: "$650",
-      joinDate: "05/07/2023",
-      share: "6%",
-      status: "Active",
-    },
-    {
-      id: "INV-WZ1007",
-      name: "Robert Taylor",
-      contact: "03401476388",
-      initialInvestment: "$900",
-      currentBalance: "$2,100",
-      joinDate: "10/07/2023",
-      share: "20%",
-      status: "Active",
-    },
-    {
-      id: "INV-WZ1008",
-      name: "Jennifer Lee",
-      contact: "03401476389",
-      initialInvestment: "$350",
-      currentBalance: "$820",
-      joinDate: "15/07/2023",
-      share: "9%",
-      status: "In Active",
-    },
-    {
-      id: "INV-WZ1009",
-      name: "James Wilson",
-      contact: "03401476390",
-      initialInvestment: "$680",
-      currentBalance: "$1,550",
-      joinDate: "20/07/2023",
-      share: "14%",
-      status: "Active",
-    },
-    {
-      id: "INV-WZ1010",
-      name: "Amanda Garcia",
-      contact: "03401476391",
-      initialInvestment: "$550",
-      currentBalance: "$1,280",
-      joinDate: "25/07/2023",
-      share: "11%",
-      status: "Active",
-    },
-  ];
+  const [investorsData, setInvestorsData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
@@ -128,12 +28,28 @@ const Investors = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchInvestors();
+  }, []);
+
+  const fetchInvestors = async () => {
+    try {
+      setLoading(true);
+      const response = await investorsApi.getAll();
+      setInvestorsData(response.data.data.investors);
+    } catch (error) {
+      console.error("Error fetching investors:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Filter investors based on search term
   const filteredInvestors = investorsData.filter(
     (investor) =>
-      investor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      investor.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      investor.contact.includes(searchTerm)
+      (investor.name && investor.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (investor.investorId && investor.investorId.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (investor.contactNo && investor.contactNo.includes(searchTerm))
   );
 
   // Sort investors
@@ -143,18 +59,8 @@ const Investors = () => {
     let aValue = a[sortColumn];
     let bValue = b[sortColumn];
 
-    // Handle numeric values with $ symbol
-    if (sortColumn === "initialInvestment" || sortColumn === "currentBalance") {
-      aValue = parseFloat(aValue.replace(/[^0-9.-]+/g, ""));
-      bValue = parseFloat(bValue.replace(/[^0-9.-]+/g, ""));
-    }
-
-    // Handle date values
-    if (sortColumn === "joinDate") {
-      aValue = new Date(aValue.split("/").reverse().join("-"));
-      bValue = new Date(bValue.split("/").reverse().join("-"));
-    }
-
+    // Handle numeric values with $ symbol (if any in future)
+    // Basic sorting for now
     if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
     if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
     return 0;
@@ -218,13 +124,19 @@ const Investors = () => {
     navigate("/investors/add");
   };
 
-  const handleEditInvestor = (investorId) => {
-    navigate(`/investors/edit/${investorId}`);
+  const handleEditInvestor = (id) => {
+    navigate(`/investors/edit/${id}`); // Assumes backend uses _id for internal routing, but investorId for display
   };
 
-  const handleDeleteInvestor = (investor) => {
+  const handleDeleteInvestor = async (investor) => {
     if (window.confirm(`Are you sure you want to delete ${investor.name}?`)) {
-      console.log("Delete investor:", investor);
+      try {
+        await investorsApi.delete(investor._id); // Use backend _id
+        fetchInvestors();
+      } catch (error) {
+        console.error("Error deleting investor:", error);
+        alert("Failed to delete investor");
+      }
     }
   };
 
@@ -302,161 +214,165 @@ const Investors = () => {
           </div>
 
           <div className="investors-table-container">
-            <table className="investors-table">
-              <thead>
-                <tr>
-                  <th className="investors-checkbox-column">
-                    <input
-                      type="checkbox"
-                      onChange={handleSelectAll}
-                      checked={
-                        currentInvestors.length > 0 &&
-                        selectedRows.length === currentInvestors.length
-                      }
-                      aria-label="Select all investors"
-                    />
-                  </th>
-                  <th
-                    onClick={() => handleSort("id")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Investor ID {getSortIcon("id")}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("name")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Investor Name {getSortIcon("name")}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("contact")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Contact No {getSortIcon("contact")}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("initialInvestment")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Initial Investment {getSortIcon("initialInvestment")}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("currentBalance")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Current Balance {getSortIcon("currentBalance")}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("joinDate")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Join Date {getSortIcon("joinDate")}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("share")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Share {getSortIcon("share")}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("status")}
-                    className="investors-sortable"
-                  >
-                    <div className="investors-th-content">
-                      Status {getSortIcon("status")}
-                    </div>
-                  </th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentInvestors.length > 0 ? (
-                  currentInvestors.map((investor, index) => (
-                    <tr
-                      key={investor.id}
-                      className={
-                        selectedRows.includes(startIndex + index)
-                          ? "investors-row-selected"
-                          : ""
-                      }
+            {loading ? (
+              <div className="investors-no-results">Loading...</div>
+            ) : (
+              <table className="investors-table">
+                <thead>
+                  <tr>
+                    <th className="investors-checkbox-column">
+                      <input
+                        type="checkbox"
+                        onChange={handleSelectAll}
+                        checked={
+                          currentInvestors.length > 0 &&
+                          selectedRows.length === currentInvestors.length
+                        }
+                        aria-label="Select all investors"
+                      />
+                    </th>
+                    <th
+                      onClick={() => handleSort("investorId")}
+                      className="investors-sortable"
                     >
-                      <td className="investors-checkbox-column">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(startIndex + index)}
-                          onChange={() => handleSelectRow(index)}
-                          aria-label={`Select ${investor.name}`}
-                        />
-                      </td>
-                      <td className="investors-investor-id">{investor.id}</td>
-                      <td className="investors-investor-name">
-                        {investor.name}
-                      </td>
-                      <td className="investors-contact">{investor.contact}</td>
-                      <td className="investors-initial-investment">
-                        {investor.initialInvestment}
-                      </td>
-                      <td className="investors-current-balance">
-                        {investor.currentBalance}
-                      </td>
-                      <td className="investors-join-date">
-                        {investor.joinDate}
-                      </td>
-                      <td className="investors-share">{investor.share}</td>
-                      <td className="investors-status-cell">
-                        <span
-                          className={`investors-status-badge investors-status-${investor.status
-                            .toLowerCase()
-                            .replace(" ", "-")}`}
-                        >
-                          {investor.status}
-                        </span>
-                      </td>
-                      <td className="investors-action-cell">
-                        <div className="investors-action-buttons">
-                          <button
-                            className="investors-action-btn investors-edit-btn"
-                            onClick={() => handleEditInvestor(investor.id)}
-                            title="Edit investor"
-                            aria-label={`Edit ${investor.name}`}
+                      <div className="investors-th-content">
+                        Investor ID {getSortIcon("investorId")}
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => handleSort("name")}
+                      className="investors-sortable"
+                    >
+                      <div className="investors-th-content">
+                        Investor Name {getSortIcon("name")}
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => handleSort("contactNo")}
+                      className="investors-sortable"
+                    >
+                      <div className="investors-th-content">
+                        Contact No {getSortIcon("contactNo")}
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => handleSort("initialInvestment")}
+                      className="investors-sortable"
+                    >
+                      <div className="investors-th-content">
+                        Initial Investment {getSortIcon("initialInvestment")}
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => handleSort("currentBalance")}
+                      className="investors-sortable"
+                    >
+                      <div className="investors-th-content">
+                        Current Balance {getSortIcon("currentBalance")}
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => handleSort("joinDate")}
+                      className="investors-sortable"
+                    >
+                      <div className="investors-th-content">
+                        Join Date {getSortIcon("joinDate")}
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => handleSort("profitShare")}
+                      className="investors-sortable"
+                    >
+                      <div className="investors-th-content">
+                        Share {getSortIcon("profitShare")}
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => handleSort("status")}
+                      className="investors-sortable"
+                    >
+                      <div className="investors-th-content">
+                        Status {getSortIcon("status")}
+                      </div>
+                    </th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentInvestors.length > 0 ? (
+                    currentInvestors.map((investor, index) => (
+                      <tr
+                        key={investor._id}
+                        className={
+                          selectedRows.includes(startIndex + index)
+                            ? "investors-row-selected"
+                            : ""
+                        }
+                      >
+                        <td className="investors-checkbox-column">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(startIndex + index)}
+                            onChange={() => handleSelectRow(index)}
+                            aria-label={`Select ${investor.name}`}
+                          />
+                        </td>
+                        <td className="investors-investor-id">{investor.investorId}</td>
+                        <td className="investors-investor-name">
+                          {investor.name}
+                        </td>
+                        <td className="investors-contact">{investor.contactNo}</td>
+                        <td className="investors-initial-investment">
+                          ${investor.initialInvestment}
+                        </td>
+                        <td className="investors-current-balance">
+                          ${investor.currentBalance}
+                        </td>
+                        <td className="investors-join-date">
+                          {new Date(investor.joinDate).toLocaleDateString()}
+                        </td>
+                        <td className="investors-share">{investor.profitShare}%</td>
+                        <td className="investors-status-cell">
+                          <span
+                            className={`investors-status-badge investors-status-${investor.status
+                              .toLowerCase()
+                              .replace(" ", "-")}`}
                           >
-                            <MdEdit />
-                          </button>
-                          <button
-                            className="investors-action-btn investors-delete-btn"
-                            onClick={() => handleDeleteInvestor(investor)}
-                            title="Delete investor"
-                            aria-label={`Delete ${investor.name}`}
-                          >
-                            <MdDelete />
-                          </button>
-                        </div>
+                            {investor.status}
+                          </span>
+                        </td>
+                        <td className="investors-action-cell">
+                          <div className="investors-action-buttons">
+                            <button
+                              className="investors-action-btn investors-edit-btn"
+                              onClick={() => handleEditInvestor(investor._id)}
+                              title="Edit investor"
+                              aria-label={`Edit ${investor.name}`}
+                            >
+                              <MdEdit />
+                            </button>
+                            <button
+                              className="investors-action-btn investors-delete-btn"
+                              onClick={() => handleDeleteInvestor(investor)}
+                              title="Delete investor"
+                              aria-label={`Delete ${investor.name}`}
+                            >
+                              <MdDelete />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="10" className="investors-no-results">
+                        No investors found
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="10" className="investors-no-results">
-                      No investors found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
 
           <div className="investors-pagination">

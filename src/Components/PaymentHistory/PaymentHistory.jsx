@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdFilterList,
   MdMenu,
@@ -8,6 +8,7 @@ import {
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { paymentsApi } from "../services/api";
 import "./PaymentHistory.css";
 
 const PaymentHistory = () => {
@@ -15,90 +16,31 @@ const PaymentHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterInvestor, setFilterInvestor] = useState("All");
   const [filterMethod, setFilterMethod] = useState("All");
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const paymentHistory = [
-    {
-      id: "PAY001",
-      date: "12 Jan 2025",
-      investor: "Adeel",
-      source: "Investment",
-      amount: "$12,231",
-      method: "Bank Transfer",
-      remarks: "Initial Investment",
-    },
-    {
-      id: "PAY002",
-      date: "12 Jan 2025",
-      investor: "Farhan",
-      source: "Profit",
-      amount: "$150",
-      method: "Cash",
-      remarks: "Profit Share",
-    },
-    {
-      id: "PAY003",
-      date: "10 Jan 2025",
-      investor: "Ali Khan",
-      source: "Investment",
-      amount: "$5,000",
-      method: "Bank Transfer",
-      remarks: "Additional Investment",
-    },
-    {
-      id: "PAY004",
-      date: "08 Jan 2025",
-      investor: "Zara Motors",
-      source: "Profit",
-      amount: "$2,500",
-      method: "Online Payment",
-      remarks: "Monthly Profit",
-      status: "Pending",
-    },
-    {
-      id: "PAY005",
-      date: "05 Jan 2025",
-      investor: "Adeel",
-      source: "Withdrawal",
-      amount: "$3,000",
-      method: "Bank Transfer",
-      remarks: "Fund Withdrawal",
-    },
-    {
-      id: "PAY006",
-      date: "03 Jan 2025",
-      investor: "Farhan",
-      source: "Investment",
-      amount: "$7,500",
-      method: "Check",
-      remarks: "New Investment",
-    },
-    {
-      id: "PAY007",
-      date: "01 Jan 2025",
-      investor: "Ali Khan",
-      source: "Profit",
-      amount: "$1,200",
-      method: "Bank Transfer",
-      remarks: "Year-end Profit",
-    },
-    {
-      id: "PAY008",
-      date: "28 Dec 2024",
-      investor: "Zara Motors",
-      source: "Investment",
-      amount: "$10,000",
-      method: "Online Payment",
-      remarks: "Capital Increase",
-      status: "Failed",
-    },
-  ];
+  useEffect(() => {
+    fetchPayments();
+  }, []);
 
-  const filteredPayments = paymentHistory.filter((payment) => {
+  const fetchPayments = async () => {
+    try {
+      setLoading(true);
+      const response = await paymentsApi.getAll();
+      setPayments(response.data.data.payments);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredPayments = payments.filter((payment) => {
     const matchesSearch =
       payment.investor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.remarks.toLowerCase().includes(searchTerm.toLowerCase());
+      payment._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (payment.remarks && payment.remarks.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesInvestor =
       filterInvestor === "All" || payment.investor === filterInvestor;
@@ -113,8 +55,9 @@ const PaymentHistory = () => {
     navigate("/payments");
   };
 
-  const investors = ["All", "Adeel", "Farhan", "Ali Khan", "Zara Motors"];
-  const methods = ["All", "Bank Transfer", "Cash", "Online Payment", "Check"];
+  // Get unique investors and methods for filters
+  const investors = ["All", ...new Set(payments.map(p => p.investor))];
+  const methods = ["All", ...new Set(payments.map(p => p.method))];
 
   return (
     <div className="paymenthistory-wrapper">
@@ -220,53 +163,57 @@ const PaymentHistory = () => {
           <div className="paymenthistory-table-container">
             <div className="paymenthistory-table-card">
               <div className="paymenthistory-table-responsive">
-                <table className="paymenthistory-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Date</th>
-                      <th>Investor</th>
-                      <th>Payment Source</th>
-                      <th>Amount</th>
-                      <th>Method</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPayments.map((payment) => (
-                      <tr key={payment.id}>
-                        <td className="paymenthistory-payment-id">
-                          {payment.id}
-                        </td>
-                        <td className="paymenthistory-payment-date">
-                          {payment.date}
-                        </td>
-                        <td className="paymenthistory-payment-investor">
-                          {payment.investor}
-                        </td>
-                        <td className="paymenthistory-payment-source">
-                          {payment.source}
-                        </td>
-                        <td className="paymenthistory-payment-amount">
-                          {payment.amount}
-                        </td>
-                        <td className="paymenthistory-payment-method">
-                          {payment.method}
-                        </td>
-
-                        <td className="paymenthistory-payment-remarks">
-                          {payment.remarks}
-                        </td>
+                {loading ? (
+                  <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+                ) : (
+                  <table className="paymenthistory-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Investor</th>
+                        <th>Payment Source</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Remarks</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {filteredPayments.map((payment) => (
+                        <tr key={payment._id}>
+                          <td className="paymenthistory-payment-id">
+                            {payment._id.substring(0, 8)}...
+                          </td>
+                          <td className="paymenthistory-payment-date">
+                            {new Date(payment.date).toLocaleDateString()}
+                          </td>
+                          <td className="paymenthistory-payment-investor">
+                            {payment.investor}
+                          </td>
+                          <td className="paymenthistory-payment-source">
+                            {payment.source}
+                          </td>
+                          <td className="paymenthistory-payment-amount">
+                            ${payment.amount?.toLocaleString()}
+                          </td>
+                          <td className="paymenthistory-payment-method">
+                            {payment.method}
+                          </td>
+
+                          <td className="paymenthistory-payment-remarks">
+                            {payment.remarks}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
 
               {/* Pagination */}
               <div className="paymenthistory-pagination-container">
                 <div className="paymenthistory-pagination-info">
-                  Showing {filteredPayments.length} of {paymentHistory.length}{" "}
+                  Showing {filteredPayments.length} of {payments.length}{" "}
                   payments
                 </div>
                 <div className="paymenthistory-pagination-controls">

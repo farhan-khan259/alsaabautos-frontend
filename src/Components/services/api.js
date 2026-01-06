@@ -1,71 +1,70 @@
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+import axios from 'axios';
 
-// const handleResponse = async (response) => {
-//     const data = await response.json();
-//     if (!response.ok) {
-//         throw new Error(data.message || 'Something went wrong');
-//     }
-//     return data;
-// };
+const API_BASE_URL = 'http://localhost:9005/api/v1';
 
-// // Add token to requests if available
-// const getHeaders = () => {
-//     const token = localStorage.getItem('token');
-//     const headers = {
-//         'Content-Type': 'application/json',
-//     };
-//     if (token) {
-//         headers['Authorization'] = `Bearer ${token}`;
-//     }
-//     return headers;
-// };
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-// // Dashboard API calls
-// export const dashboardApi = {
-//     // Get dashboard statistics
-//     getDashboardStats: async () => {
-//         const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
-//             headers: getHeaders(),
-//         });
-//         return handleResponse(response);
-//     },
+// Add a request interceptor to attach the token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-//     // Get monthly performance
-//     getMonthlyPerformance: async (year) => {
-//         const url = new URL(`${API_BASE_URL}/dashboard/monthly-performance`);
-//         if (year) {
-//             url.searchParams.append('year', year);
-//         }
-//         const response = await fetch(url, {
-//             headers: getHeaders(),
-//         });
-//         return handleResponse(response);
-//     },
+export const authApi = {
+  login: (credentials) => api.post('/auth/login', credentials),
+  signup: (userData) => api.post('/auth/signup', userData),
+  getMe: () => api.get('/auth/me'),
+};
 
-//     // Get sales summary
-//     getSalesSummary: async (startDate, endDate) => {
-//         const url = new URL(`${API_BASE_URL}/dashboard/sales-summary`);
-//         if (startDate) url.searchParams.append('startDate', startDate);
-//         if (endDate) url.searchParams.append('endDate', endDate);
+export const unitsApi = {
+  getAll: () => api.get('/units'),
+  getOne: (id) => api.get(`/units/${id}`),
+  create: (data) => api.post('/units', data),
+  update: (id, data) => api.patch(`/units/${id}`, data),
+  delete: (id) => api.delete(`/units/${id}`),
+};
 
-//         const response = await fetch(url, {
-//             headers: getHeaders(),
-//         });
-//         return handleResponse(response);
-//     },
+export const investorsApi = {
+  getAll: () => api.get('/investors'),
+  getOne: (id) => api.get(`/investors/${id}`),
+  create: (data) => api.post('/investors', data),
+  update: (id, data) => api.patch(`/investors/${id}`, data),
+  delete: (id) => api.delete(`/investors/${id}`),
+};
 
-//     // Get investor performance
-//     getInvestorPerformance: async () => {
-//         const response = await fetch(`${API_BASE_URL}/dashboard/investor-performance`, {
-//             headers: getHeaders(),
-//         });
-//         return handleResponse(response);
-//     },
-// };
+export const expensesApi = {
+  getAll: () => api.get('/expenses'),
+  getOne: (id) => api.get(`/expenses/${id}`),
+  create: (data) => api.post('/expenses', data),
+  update: (id, data) => api.patch(`/expenses/${id}`, data),
+  delete: (id) => api.delete(`/expenses/${id}`),
+};
 
-// // Utility function for error handling
-// export const handleApiError = (error) => {
-//     console.error('API Error:', error);
-//     // You can add toast notifications here if needed
-//     return { success: false, message: error.message };
-// };
+export const paymentsApi = {
+  getAll: () => api.get('/payments'),
+  getOne: (id) => api.get(`/payments/${id}`),
+  create: (data) => api.post('/payments', data),
+  update: (id, data) => api.patch(`/payments/${id}`, data),
+  delete: (id) => api.delete(`/payments/${id}`),
+};
+
+export const reportsApi = {
+  getAll: () => api.get('/reports'),
+  getOne: (id) => api.get(`/reports/${id}`),
+  create: (data) => api.post('/reports', data),
+  update: (id, data) => api.patch(`/reports/${id}`, data),
+  delete: (id) => api.delete(`/reports/${id}`),
+};
+
+export default api;

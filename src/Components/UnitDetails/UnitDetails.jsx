@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdArrowBack,
   MdDelete,
@@ -8,8 +8,9 @@ import {
   MdSearch,
   MdSettings,
 } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { unitsApi } from "../services/api";
 import "./UnitDetails.css";
 
 import car1 from "../../Assets/Pictures/Image (1).png";
@@ -23,7 +24,49 @@ const images = [car1, car2, car3, car4, car5];
 const UnitDetails = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeImage, setActiveImage] = useState(images[0]);
+  const [unit, setUnit] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUnit = async () => {
+      try {
+        setLoading(true);
+        const response = await unitsApi.getOne(id);
+        setUnit(response.data.data.unit);
+      } catch (error) {
+        console.error("Error fetching unit details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchUnit();
+    }
+  }, [id]);
+
+  const handleEdit = () => {
+    navigate(`/units/edit/${id}`);
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this unit?")) {
+      try {
+        await unitsApi.delete(id);
+        navigate("/units");
+      } catch (error) {
+        console.error("Error deleting unit:", error);
+        alert("Failed to delete unit");
+      }
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (!unit) return <div>Unit not found</div>;
+
+  const profit = (unit.saleAmount || 0) - (unit.purchaseAmount || 0) - (unit.expenses || 0) - (unit.taxAmount || 0);
 
   return (
     <div className="unitdetails-wrapper">
@@ -89,7 +132,7 @@ const UnitDetails = () => {
             <div className="unitdetails-left-column">
               <div className="unitdetails-image-gallery">
                 <div className="unitdetails-main-image">
-                  <img src={activeImage} alt="Audi A6" />
+                  <img src={activeImage} alt={unit.title} />
                 </div>
                 <div className="unitdetails-thumbnail-gallery">
                   {images.map((img, index) => (
@@ -108,7 +151,7 @@ const UnitDetails = () => {
                       }
                       aria-label={`View image ${index + 1}`}
                     >
-                      <img src={img} alt={`Audi A6 view ${index + 1}`} />
+                      <img src={img} alt={`view ${index + 1}`} />
                     </div>
                   ))}
                 </div>
@@ -120,30 +163,32 @@ const UnitDetails = () => {
               {/* Header Card */}
               <div className="unitdetails-details-header">
                 <div className="unitdetails-header-left-content">
-                  <p className="unitdetails-car-category">Sedan</p>
-                  <h2 className="unitdetails-car-name">Audi A6</h2>
+                  <p className="unitdetails-car-category">{unit.make}</p>
+                  <h2 className="unitdetails-car-name">{unit.title}</h2>
                   <div className="unitdetails-status-badges">
                     <span className="unitdetails-badge unitdetails-badge-available">
-                      Available
+                      {unit.status}
                     </span>
                     <span className="unitdetails-badge unitdetails-badge-audit">
-                      Audit Date: 12 Unit
+                      Audit Date: {new Date().toLocaleDateString()}
                     </span>
                   </div>
                 </div>
 
                 <div className="unitdetails-header-right-content">
-                  <div className="unitdetails-price-tag">$57654</div>
+                  <div className="unitdetails-price-tag">${unit.saleAmount?.toLocaleString()}</div>
                   <div className="unitdetails-action-buttons">
                     <button
                       className="unitdetails-action-btn"
                       aria-label="Edit unit"
+                      onClick={handleEdit}
                     >
                       <MdEdit />
                     </button>
                     <button
                       className="unitdetails-action-btn"
                       aria-label="Delete unit"
+                      onClick={handleDelete}
                     >
                       <MdDelete />
                     </button>
@@ -155,11 +200,8 @@ const UnitDetails = () => {
               <div className="unitdetails-section unitdetails-about-section">
                 <h3 className="unitdetails-section-title">About:</h3>
                 <p className="unitdetails-about-text">
-                  Audi A6 is a luxurious and sophisticated sedan, ideal for both
-                  daily commutes and extended journeys. Renowned for its
-                  powerful performance and advanced technology features, the A6
-                  provides a refined driving experience with exceptional
-                  comfort.
+                  {/* Placeholder description as it's not in the model yet */}
+                  No description available.
                 </p>
               </div>
 
@@ -169,20 +211,20 @@ const UnitDetails = () => {
                 <div className="unitdetails-details-grid">
                   <div className="unitdetails-detail-item">
                     <span className="unitdetails-detail-label">ID:</span>
-                    <span className="unitdetails-detail-value">HW-W20001</span>
+                    <span className="unitdetails-detail-value">{unit._id.substring(0, 8)}</span>
                   </div>
                   <div className="unitdetails-detail-item">
                     <span className="unitdetails-detail-label">
                       VIN Number:
                     </span>
-                    <span className="unitdetails-detail-value">353634535</span>
+                    <span className="unitdetails-detail-value">{unit.vinNumber}</span>
                   </div>
                   <div className="unitdetails-detail-item">
                     <span className="unitdetails-detail-label">
-                      Contact No:
+                      Lot Number:
                     </span>
                     <span className="unitdetails-detail-value">
-                      03401475382
+                      {unit.lotNumber}
                     </span>
                   </div>
                   <div className="unitdetails-detail-item">
@@ -190,13 +232,13 @@ const UnitDetails = () => {
                       Customer Name:
                     </span>
                     <span className="unitdetails-detail-value">
-                      Kyle Thompson
+                      {unit.customerName}
                     </span>
                   </div>
                   <div className="unitdetails-detail-item">
                     <span className="unitdetails-detail-label">Status:</span>
                     <span className="unitdetails-detail-value unitdetails-detail-sold">
-                      Sold
+                      {unit.status}
                     </span>
                   </div>
                 </div>
@@ -205,30 +247,30 @@ const UnitDetails = () => {
               {/* Investor Section */}
               <div className="unitdetails-section unitdetails-investor-section">
                 <h3 className="unitdetails-section-title">
-                  Investor Name: Usman, Houston, Alaq
+                  Investor Name: {unit.investors?.join(", ")}
                 </h3>
                 <div className="unitdetails-financial-grid">
                   <div className="unitdetails-financial-item">
                     <span className="unitdetails-financial-label">
                       Purchase:
                     </span>
-                    <span className="unitdetails-financial-value">$1728</span>
+                    <span className="unitdetails-financial-value">${unit.purchaseAmount?.toLocaleString()}</span>
                   </div>
                   <div className="unitdetails-financial-item">
                     <span className="unitdetails-financial-label">
                       Expense:
                     </span>
-                    <span className="unitdetails-financial-value">$587</span>
+                    <span className="unitdetails-financial-value">${unit.expenses?.toLocaleString()}</span>
                   </div>
                   <div className="unitdetails-financial-item">
                     <span className="unitdetails-financial-label">Profit:</span>
                     <span className="unitdetails-financial-value unitdetails-financial-profit">
-                      $1000
+                      ${profit.toLocaleString()}
                     </span>
                   </div>
                   <div className="unitdetails-financial-item">
                     <span className="unitdetails-financial-label">Sale:</span>
-                    <span className="unitdetails-financial-value">$2728</span>
+                    <span className="unitdetails-financial-value">${unit.saleAmount?.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

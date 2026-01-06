@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MdAdd,
   MdMenu,
@@ -8,24 +8,77 @@ import {
   MdSearch,
   MdSettings,
 } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { reportsApi } from "../services/api";
 import "./EditReport.css";
 
 const EditReport = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [investors, setInvestors] = useState(3); // Start with 3 investors for edit mode
+  const [investors, setInvestors] = useState(2); // Start with at least 2 investors in UI
   const [formData, setFormData] = useState({
-    carId: "101",
-    customerName: "Mangal Trader",
-    purchasePrice: "5000",
-    salesPrice: "7200",
+    carId: "",
+    customerName: "",
+    purchasePrice: "",
+    salesPrice: "",
   });
-
   const [investorData, setInvestorData] = useState({
-    investor1: { name: "Usman", profit: "" },
-    investor2: { name: "Adeel", profit: "" },
-    investor3: { name: "Farhan", profit: "" },
+    investor1: { name: "", profit: "" },
+    investor2: { name: "", profit: "" },
   });
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchReport = async () => {
+      try {
+        setLoading(true);
+        const response = await reportsApi.getOne(id);
+        const data = response.data.data.report;
+
+        setFormData({
+          carId: data.carId || "",
+          customerName: data.customerName || "",
+          purchasePrice: data.purchasePrice || "",
+          salesPrice: data.salesPrice || "",
+        });
+
+        const newInvestorData = {};
+        let count = 0;
+        if (data.investors && Array.isArray(data.investors)) {
+          data.investors.forEach((inv, index) => {
+            newInvestorData[`investor${index + 1}`] = {
+              name: inv.name,
+              profit: inv.profit
+            };
+            count = index + 1;
+          });
+        }
+        
+        // Ensure at least 2 investors are initialized for UI consistency
+        if (count < 2) {
+            for (let i = count + 1; i <= 2; i++) {
+                newInvestorData[`investor${i}`] = { name: "", profit: "" };
+            }
+            count = 2;
+        }
+
+        setInvestorData(newInvestorData);
+        setInvestors(count);
+
+      } catch (error) {
+        console.error("Error fetching report:", error);
+        alert("Failed to fetch report details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchReport();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,9 +100,7 @@ const EditReport = () => {
 
   const addInvestor = () => {
     if (investors < 5) {
-      // Limit to 5 investors max
       setInvestors(investors + 1);
-      // Initialize new investor data
       setInvestorData((prev) => ({
         ...prev,
         [`investor${investors + 1}`]: { name: "", profit: "" },
@@ -57,19 +108,40 @@ const EditReport = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const submissionData = {
-      ...formData,
-      investors: Object.keys(investorData).reduce((acc, key) => {
+    try {
+      const investorsArray = Object.keys(investorData).reduce((acc, key) => {
         if (parseInt(key.replace("investor", "")) <= investors) {
-          acc[key] = investorData[key];
+          const inv = investorData[key];
+          if (inv.name && inv.profit !== "") { // Check if valid
+             acc.push({
+              name: inv.name,
+              profit: Number(inv.profit)
+            });
+          }
         }
         return acc;
-      }, {}),
-    };
-    console.log("Updated Data:", submissionData);
+      }, []);
+
+      const payload = {
+        ...formData,
+        purchasePrice: Number(formData.purchasePrice),
+        salesPrice: Number(formData.salesPrice),
+        netProfit: Number(formData.salesPrice) - Number(formData.purchasePrice),
+        investors: investorsArray,
+      };
+
+      await reportsApi.update(id, payload);
+      alert("Report updated successfully!");
+      navigate("/pl");
+    } catch (error) {
+      console.error("Error updating report:", error);
+      alert("Failed to update report");
+    }
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="editreport-wrapper">
@@ -118,7 +190,7 @@ const EditReport = () => {
               <h2 className="editreport-card-title">Details</h2>
 
               <div className="editreport-actions">
-                <button type="button" className="editreport-discard">
+                <button type="button" className="editreport-discard" onClick={() => navigate("/pl")}>
                   Discard
                 </button>
                 <button type="submit" className="editreport-save">
@@ -149,190 +221,48 @@ const EditReport = () => {
                 />
               </div>
 
-              {/* Investor 1 */}
-              <div className="editreport-field">
-                <label className="editreport-field-label">Investor 1</label>
-                <select
-                  name="investor1"
-                  value={investorData.investor1.name}
-                  onChange={(e) =>
-                    handleInvestorChange(1, "name", e.target.value)
-                  }
-                  className="editreport-field-select"
-                >
-                  <option value="Usman">Usman</option>
-                  <option value="Adeel">Adeel</option>
-                  <option value="Farhan">Farhan</option>
-                </select>
-              </div>
+              {/* Dynamic Investors Fields */}
+              {Array.from({ length: investors }, (_, i) => {
+                const investorKey = `investor${i + 1}`;
+                return (
+                  <div key={investorKey} style={{ display: 'contents' }}>
+                    <div className="editreport-field">
+                      <label className="editreport-field-label">Investor {i + 1}</label>
+                      <select
+                        name={investorKey}
+                        value={investorData[investorKey]?.name || ""}
+                        onChange={(e) =>
+                          handleInvestorChange(i + 1, "name", e.target.value)
+                        }
+                        className="editreport-field-select"
+                      >
+                        <option value="">Select</option>
+                        <option value="Usman">Usman</option>
+                        <option value="Adeel">Adeel</option>
+                        <option value="Farhan">Farhan</option>
+                      </select>
+                    </div>
 
-              {/* Investor 1 Profit */}
-              <div className="editreport-field">
-                <label className="editreport-field-label">
-                  Investor 1 Profit %
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter Profit %"
-                  value={investorData.investor1.profit}
-                  onChange={(e) =>
-                    handleInvestorChange(1, "profit", e.target.value)
-                  }
-                  className="editreport-field-input"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                />
-              </div>
-
-              {/* Investor 2 */}
-              <div className="editreport-field">
-                <label className="editreport-field-label">Investor 2</label>
-                <select
-                  name="investor2"
-                  value={investorData.investor2.name}
-                  onChange={(e) =>
-                    handleInvestorChange(2, "name", e.target.value)
-                  }
-                  className="editreport-field-select"
-                >
-                  <option value="Adeel">Adeel</option>
-                  <option value="Usman">Usman</option>
-                  <option value="Farhan">Farhan</option>
-                </select>
-              </div>
-
-              {/* Investor 2 Profit */}
-              <div className="editreport-field">
-                <label className="editreport-field-label">
-                  Investor 2 Profit %
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter Profit %"
-                  value={investorData.investor2.profit}
-                  onChange={(e) =>
-                    handleInvestorChange(2, "profit", e.target.value)
-                  }
-                  className="editreport-field-input"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                />
-              </div>
-
-              {/* Investor 3 */}
-              <div className="editreport-field">
-                <label className="editreport-field-label">Investor 3</label>
-                <select
-                  name="investor3"
-                  value={investorData.investor3.name}
-                  onChange={(e) =>
-                    handleInvestorChange(3, "name", e.target.value)
-                  }
-                  className="editreport-field-select"
-                >
-                  <option value="Farhan">Farhan</option>
-                  <option value="Usman">Usman</option>
-                  <option value="Adeel">Adeel</option>
-                </select>
-              </div>
-
-              {/* Investor 3 Profit */}
-              <div className="editreport-field">
-                <label className="editreport-field-label">
-                  Investor 3 Profit %
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter Profit %"
-                  value={investorData.investor3.profit}
-                  onChange={(e) =>
-                    handleInvestorChange(3, "profit", e.target.value)
-                  }
-                  className="editreport-field-input"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                />
-              </div>
-
-              {/* Additional investors (4, 5) */}
-              {investors >= 4 && (
-                <>
-                  <div className="editreport-field">
-                    <label className="editreport-field-label">Investor 4</label>
-                    <select
-                      value={investorData.investor4?.name || ""}
-                      onChange={(e) =>
-                        handleInvestorChange(4, "name", e.target.value)
-                      }
-                      className="editreport-field-select"
-                    >
-                      <option value="">Select</option>
-                      <option value="Usman">Usman</option>
-                      <option value="Adeel">Adeel</option>
-                      <option value="Farhan">Farhan</option>
-                    </select>
+                    <div className="editreport-field">
+                      <label className="editreport-field-label">
+                        Investor {i + 1} Profit %
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Enter Profit %"
+                        value={investorData[investorKey]?.profit || ""}
+                        onChange={(e) =>
+                          handleInvestorChange(i + 1, "profit", e.target.value)
+                        }
+                        className="editreport-field-input"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                      />
+                    </div>
                   </div>
-
-                  <div className="editreport-field">
-                    <label className="editreport-field-label">
-                      Investor 4 Profit %
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="Enter Profit %"
-                      value={investorData.investor4?.profit || ""}
-                      onChange={(e) =>
-                        handleInvestorChange(4, "profit", e.target.value)
-                      }
-                      className="editreport-field-input"
-                      min="0"
-                      max="100"
-                      step="0.01"
-                    />
-                  </div>
-                </>
-              )}
-
-              {investors >= 5 && (
-                <>
-                  <div className="editreport-field">
-                    <label className="editreport-field-label">Investor 5</label>
-                    <select
-                      value={investorData.investor5?.name || ""}
-                      onChange={(e) =>
-                        handleInvestorChange(5, "name", e.target.value)
-                      }
-                      className="editreport-field-select"
-                    >
-                      <option value="">Select</option>
-                      <option value="Usman">Usman</option>
-                      <option value="Adeel">Adeel</option>
-                      <option value="Farhan">Farhan</option>
-                    </select>
-                  </div>
-
-                  <div className="editreport-field">
-                    <label className="editreport-field-label">
-                      Investor 5 Profit %
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="Enter Profit %"
-                      value={investorData.investor5?.profit || ""}
-                      onChange={(e) =>
-                        handleInvestorChange(5, "profit", e.target.value)
-                      }
-                      className="editreport-field-input"
-                      min="0"
-                      max="100"
-                      step="0.01"
-                    />
-                  </div>
-                </>
-              )}
+                );
+              })}
 
               {/* Add Investor Button */}
               <div className="editreport-field">
@@ -346,7 +276,7 @@ const EditReport = () => {
                 </button>
               </div>
 
-              {/* Empty column for alignment */}
+              {/* Empty column for alignment if needed, or adjust grid */}
               <div className="editreport-field"></div>
 
               {/* Purchase and Sales Prices */}
@@ -357,6 +287,7 @@ const EditReport = () => {
                   value={formData.purchasePrice}
                   onChange={handleChange}
                   className="editreport-field-input"
+                  type="number"
                 />
               </div>
 
@@ -367,6 +298,7 @@ const EditReport = () => {
                   value={formData.salesPrice}
                   onChange={handleChange}
                   className="editreport-field-input"
+                  type="number"
                 />
               </div>
             </div>

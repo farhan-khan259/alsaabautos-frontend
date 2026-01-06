@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdAdd,
   MdCalendarToday,
@@ -10,35 +10,47 @@ import {
 } from "react-icons/md";
 import { Link } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { expensesApi } from "../services/api";
 import "./Expenses.css";
 
 const Expenses = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const expenseData = [
-    {
-      date: "12/10/2025",
-      vin: "IISDC62356325",
-      type: "Towing",
-      description: "City Transport",
-      amount: 150,
-    },
-    {
-      date: "12/10/2025",
-      vin: "DDJQY776764",
-      type: "Repair",
-      description: "City Transport",
-      amount: 150,
-    },
-    {
-      date: "12/10/2025",
-      vin: "IISDC62356325",
-      type: "Fuel",
-      description: "Fuel Charges",
-      amount: 90,
-    },
-  ];
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true);
+      const response = await expensesApi.getAll();
+      setExpenses(response.data.data.expenses);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this expense?")) {
+      try {
+        await expensesApi.delete(id);
+        fetchExpenses();
+      } catch (error) {
+        console.error("Error deleting expense:", error);
+        alert("Failed to delete expense");
+      }
+    }
+  };
+
+  const filteredExpenses = expenses.filter(expense => 
+    expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    expense.vehicleVin?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="expenses-wrapper">
@@ -134,30 +146,43 @@ const Expenses = () => {
             </div>
 
             <div className="table-container">
-              <table className="pl-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>VIN Number</th>
-                    <th>Expense Type</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {expenseData.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.date}</td>
-                      <td className="customer-name">{item.vin}</td>
-                      <td className="investor">{item.type}</td>
-                      <td>{item.description}</td>
-                      <td className="net-profit">
-                        ${item.amount.toLocaleString()}
-                      </td>
+              {loading ? (
+                <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+              ) : (
+                <table className="pl-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>VIN Number</th>
+                      <th>Expense Type</th>
+                      <th>Description</th>
+                      <th>Amount</th>
+                      <th>Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredExpenses.map((item) => (
+                      <tr key={item._id}>
+                        <td>{new Date(item.date).toLocaleDateString()}</td>
+                        <td className="customer-name">{item.vehicleVin}</td>
+                        <td className="investor">{item.expenseType}</td>
+                        <td>{item.description}</td>
+                        <td className="net-profit">
+                          ${item.amount.toLocaleString()}
+                        </td>
+                        <td>
+                          <button 
+                            onClick={() => handleDelete(item._id)}
+                            style={{ color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 

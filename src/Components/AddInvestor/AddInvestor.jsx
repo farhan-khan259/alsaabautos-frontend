@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { MdMenu, MdSearch, MdSettings, MdNotifications } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
+import { investorsApi } from "../services/api";
 import "./AddInvestor.css";
 
 const AddInvestor = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [formData, setFormData] = useState({
     investorId: "",
-    investorName: "",
+    name: "",
     contactNo: "",
     email: "",
     joinDate: "",
@@ -17,21 +19,37 @@ const AddInvestor = () => {
     initialInvestment: "",
     profitShare: "",
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add your form submission logic here
+    setLoading(true);
+    try {
+      const payload = {
+        ...formData,
+        initialInvestment: Number(formData.initialInvestment),
+        profitShare: Number(formData.profitShare)
+      };
+      await investorsApi.create(payload);
+      alert("Investor added successfully!");
+      navigate("/investors");
+    } catch (error) {
+      console.error("Error creating investor:", error);
+      alert("Failed to add investor. Please check your inputs.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
     setFormData({
       investorId: "",
-      investorName: "",
+      name: "",
       contactNo: "",
       email: "",
       joinDate: "",
@@ -102,14 +120,15 @@ const AddInvestor = () => {
                 className="addinvestor-btn addinvestor-btn-outline"
                 onClick={handleReset}
               >
-                Remove
+                Reset
               </button>
               <button
                 type="submit"
                 className="addinvestor-btn addinvestor-btn-primary"
                 form="add-investor-form"
+                disabled={loading}
               >
-                Save
+                {loading ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
@@ -138,10 +157,10 @@ const AddInvestor = () => {
                   </label>
                   <input
                     type="text"
-                    name="investorName"
+                    name="name"
                     className="addinvestor-form-input"
                     placeholder="Enter Name"
-                    value={formData.investorName}
+                    value={formData.name}
                     onChange={handleChange}
                     required
                   />
