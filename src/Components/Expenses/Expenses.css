@@ -357,6 +357,52 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
+/* Action Buttons in Table */
+.expenses-action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.expenses-action-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+}
+
+.expenses-edit-btn {
+    color: #2797ff;
+    border-color: #bfdbfe;
+}
+
+.expenses-edit-btn:hover {
+    background: #dbeafe;
+    border-color: #2797ff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.expenses-delete-btn {
+    color: #ef4444;
+    border-color: #fecaca;
+}
+
+.expenses-delete-btn:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+}
+
 /* ========================
    TABLE
 ======================== */

@@ -22,10 +22,12 @@ const Login = () => {
       const { token, data } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -38,14 +40,20 @@ const Login = () => {
           <div className="login-logo">
             <img src={logo} alt="" />
           </div>
-          <h1 className="login-brand">Najoom</h1>
+          <h1 className="login-brand">ALSAAB AUTO</h1>
         </div>
 
         <h2 className="login-title">
           Cars Purchasing And Sales Management System
         </h2>
 
-        {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</div>}
+        {error && (
+          <div
+            style={{ color: "red", textAlign: "center", marginBottom: "1rem" }}
+          >
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -72,7 +80,11 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary login-btn" disabled={loading}>
+          <button
+            type="submit"
+            className="btn btn-primary login-btn"
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>

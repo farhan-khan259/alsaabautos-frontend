@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MdMenu, MdNotifications, MdSearch, MdSettings } from "react-icons/md";
+import { MdMenu } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { expensesApi } from "../services/api";
@@ -32,7 +32,7 @@ const AddExpense = () => {
     try {
       const payload = {
         ...expenseData,
-        amount: Number(expenseData.amount)
+        amount: Number(expenseData.amount),
       };
       await expensesApi.create(payload);
       alert("Expense added successfully!");
@@ -65,24 +65,6 @@ const AddExpense = () => {
             </button>
             <h1 className="addexpense-page-title">Add Expense</h1>
           </div>
-
-          <div className="addexpense-header-actions">
-            <button className="addexpense-icon-btn">
-              <MdSearch />
-            </button>
-            <button className="addexpense-icon-btn">
-              <MdSettings />
-            </button>
-            <button className="addexpense-icon-btn addexpense-notification-btn">
-              <MdNotifications />
-              <span className="addexpense-notification-dot"></span>
-            </button>
-
-            <div className="addexpense-user-info">
-              <span className="addexpense-user-name">Abram Schleifer</span>
-              <span className="addexpense-user-role">Admin</span>
-            </div>
-          </div>
         </div>
 
         {/* CONTENT */}
@@ -92,7 +74,11 @@ const AddExpense = () => {
               <h2 className="addexpense-form-title">Details</h2>
 
               <div className="addexpense-form-actions">
-                <button className="addexpense-remove-btn" type="button" onClick={() => navigate("/expenses")}>
+                <button
+                  className="addexpense-remove-btn"
+                  type="button"
+                  onClick={() => navigate("/expenses")}
+                >
                   Cancel
                 </button>
                 <button

@@ -1,29 +1,13 @@
 import { useEffect, useState } from "react";
-import {
-  MdArrowBack,
-  MdDelete,
-  MdEdit,
-  MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
-} from "react-icons/md";
+import { MdArrowBack, MdDelete, MdEdit, MdMenu } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { unitsApi } from "../services/api";
 import "./UnitDetails.css";
 
-import car1 from "../../Assets/Pictures/Image (1).png";
-import car2 from "../../Assets/Pictures/Image (2).png";
-import car3 from "../../Assets/Pictures/Image (3).png";
-import car4 from "../../Assets/Pictures/Image (4).png";
-import car5 from "../../Assets/Pictures/Image (5).png";
-
-const images = [car1, car2, car3, car4, car5];
-
 const UnitDetails = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeImage, setActiveImage] = useState(images[0]);
+  const [activeImage, setActiveImage] = useState(null);
   const [unit, setUnit] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
@@ -35,6 +19,9 @@ const UnitDetails = () => {
         setLoading(true);
         const response = await unitsApi.getOne(id);
         setUnit(response.data.data.unit);
+        // Set the first image as active, or use a placeholder
+        const imageList = response.data.data.unit.images || [];
+        setActiveImage(imageList.length > 0 ? imageList[0] : null);
       } catch (error) {
         console.error("Error fetching unit details:", error);
       } finally {
@@ -66,7 +53,11 @@ const UnitDetails = () => {
   if (loading) return <div>Loading...</div>;
   if (!unit) return <div>Unit not found</div>;
 
-  const profit = (unit.saleAmount || 0) - (unit.purchaseAmount || 0) - (unit.expenses || 0) - (unit.taxAmount || 0);
+  const profit =
+    (unit.saleAmount || 0) -
+    (unit.purchaseAmount || 0) -
+    (unit.expenses || 0) -
+    (unit.taxAmount || 0);
 
   return (
     <div className="unitdetails-wrapper">
@@ -103,26 +94,6 @@ const UnitDetails = () => {
               <h1 className="unitdetails-page-title">Unit Details</h1>
             </div>
           </div>
-
-          <div className="unitdetails-header-actions">
-            <button className="unitdetails-icon-btn" aria-label="Search">
-              <MdSearch />
-            </button>
-            <button className="unitdetails-icon-btn" aria-label="Settings">
-              <MdSettings />
-            </button>
-            <button
-              className="unitdetails-icon-btn unitdetails-notification-btn"
-              aria-label="Notifications"
-            >
-              <MdNotifications />
-              <span className="unitdetails-notification-dot"></span>
-            </button>
-            <div className="unitdetails-user-info">
-              <span className="unitdetails-user-name">Abram Schleifer</span>
-              <span className="unitdetails-user-role">Admin</span>
-            </div>
-          </div>
         </div>
 
         {/* Main Content */}
@@ -132,28 +103,40 @@ const UnitDetails = () => {
             <div className="unitdetails-left-column">
               <div className="unitdetails-image-gallery">
                 <div className="unitdetails-main-image">
-                  <img src={activeImage} alt={unit.title} />
+                  <img
+                    src={
+                      activeImage ||
+                      "https://placehold.co/600x400?text=No+Image"
+                    }
+                    alt={unit.title}
+                  />
                 </div>
                 <div className="unitdetails-thumbnail-gallery">
-                  {images.map((img, index) => (
-                    <div
-                      key={index}
-                      className={`unitdetails-thumbnail ${
-                        activeImage === img
-                          ? "unitdetails-thumbnail-active"
-                          : ""
-                      }`}
-                      onClick={() => setActiveImage(img)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) =>
-                        e.key === "Enter" && setActiveImage(img)
-                      }
-                      aria-label={`View image ${index + 1}`}
-                    >
-                      <img src={img} alt={`view ${index + 1}`} />
+                  {unit.images && unit.images.length > 0 ? (
+                    unit.images.map((img, index) => (
+                      <div
+                        key={index}
+                        className={`unitdetails-thumbnail ${
+                          activeImage === img
+                            ? "unitdetails-thumbnail-active"
+                            : ""
+                        }`}
+                        onClick={() => setActiveImage(img)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" && setActiveImage(img)
+                        }
+                        aria-label={`View image ${index + 1}`}
+                      >
+                        <img src={img} alt={`view ${index + 1}`} />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="unitdetails-no-images">
+                      No images uploaded for this unit
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
@@ -176,7 +159,9 @@ const UnitDetails = () => {
                 </div>
 
                 <div className="unitdetails-header-right-content">
-                  <div className="unitdetails-price-tag">${unit.saleAmount?.toLocaleString()}</div>
+                  <div className="unitdetails-price-tag">
+                    {unit.saleAmount?.toLocaleString()}
+                  </div>
                   <div className="unitdetails-action-buttons">
                     <button
                       className="unitdetails-action-btn"
@@ -211,13 +196,17 @@ const UnitDetails = () => {
                 <div className="unitdetails-details-grid">
                   <div className="unitdetails-detail-item">
                     <span className="unitdetails-detail-label">ID:</span>
-                    <span className="unitdetails-detail-value">{unit._id.substring(0, 8)}</span>
+                    <span className="unitdetails-detail-value">
+                      {unit._id.substring(0, 8)}
+                    </span>
                   </div>
                   <div className="unitdetails-detail-item">
                     <span className="unitdetails-detail-label">
                       VIN Number:
                     </span>
-                    <span className="unitdetails-detail-value">{unit.vinNumber}</span>
+                    <span className="unitdetails-detail-value">
+                      {unit.vinNumber}
+                    </span>
                   </div>
                   <div className="unitdetails-detail-item">
                     <span className="unitdetails-detail-label">
@@ -254,23 +243,29 @@ const UnitDetails = () => {
                     <span className="unitdetails-financial-label">
                       Purchase:
                     </span>
-                    <span className="unitdetails-financial-value">${unit.purchaseAmount?.toLocaleString()}</span>
+                    <span className="unitdetails-financial-value">
+                      {unit.purchaseAmount?.toLocaleString()}
+                    </span>
                   </div>
                   <div className="unitdetails-financial-item">
                     <span className="unitdetails-financial-label">
                       Expense:
                     </span>
-                    <span className="unitdetails-financial-value">${unit.expenses?.toLocaleString()}</span>
+                    <span className="unitdetails-financial-value">
+                      {unit.expenses?.toLocaleString()}
+                    </span>
                   </div>
                   <div className="unitdetails-financial-item">
                     <span className="unitdetails-financial-label">Profit:</span>
                     <span className="unitdetails-financial-value unitdetails-financial-profit">
-                      ${profit.toLocaleString()}
+                      {profit.toLocaleString()}
                     </span>
                   </div>
                   <div className="unitdetails-financial-item">
                     <span className="unitdetails-financial-label">Sale:</span>
-                    <span className="unitdetails-financial-value">${unit.saleAmount?.toLocaleString()}</span>
+                    <span className="unitdetails-financial-value">
+                      {unit.saleAmount?.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>

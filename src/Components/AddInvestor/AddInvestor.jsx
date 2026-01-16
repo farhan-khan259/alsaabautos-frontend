@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MdMenu, MdSearch, MdSettings, MdNotifications } from "react-icons/md";
+import { MdMenu } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { investorsApi } from "../services/api";
@@ -33,7 +33,7 @@ const AddInvestor = () => {
       const payload = {
         ...formData,
         initialInvestment: Number(formData.initialInvestment),
-        profitShare: Number(formData.profitShare)
+        profitShare: Number(formData.profitShare),
       };
       await investorsApi.create(payload);
       alert("Investor added successfully!");
@@ -81,28 +81,6 @@ const AddInvestor = () => {
               <MdMenu />
             </button>
             <h1 className="addinvestor-page-title">Add Investor</h1>
-          </div>
-
-          <div className="addinvestor-header-actions">
-            <button className="addinvestor-icon-btn" aria-label="Search">
-              <MdSearch />
-            </button>
-            <button className="addinvestor-icon-btn" aria-label="Settings">
-              <MdSettings />
-            </button>
-            <button
-              className="addinvestor-icon-btn addinvestor-notification-btn"
-              aria-label="Notifications"
-            >
-              <MdNotifications />
-              <span className="addinvestor-notification-dot"></span>
-            </button>
-            <div className="addinvestor-user-profile">
-              <div className="addinvestor-user-info">
-                <span className="addinvestor-user-name">Abram Schleifer</span>
-                <span className="addinvestor-user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </div>
 

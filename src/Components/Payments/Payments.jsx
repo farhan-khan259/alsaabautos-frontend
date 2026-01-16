@@ -1,20 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
-  MdAdd,
   MdAttachMoney,
   MdBarChart,
   MdHistory,
   MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
   MdTrendingUp,
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
-import { paymentsApi, investorsApi } from "../services/api";
+import { investorsApi, paymentsApi } from "../services/api";
 import "./Payments.css";
 
 const Payments = () => {
@@ -65,11 +61,11 @@ const Payments = () => {
     }
     setLoading(true);
     try {
-      const selectedInv = investors.find(inv => inv._id === selectedInvestor);
+      const selectedInv = investors.find((inv) => inv._id === selectedInvestor);
       const payload = {
         ...formData,
         investor: selectedInv ? selectedInv.name : "Unknown", // Backend model stores name or ID? frontend shows ID was stored, but displaying name. Let's store name for now based on previous code, or better ID if backend supports relation. Backend model has investor: String (required). I'll send name to match visual.
-        amount: Number(formData.amount)
+        amount: Number(formData.amount),
       };
       await paymentsApi.create(payload);
       alert("Payment saved successfully!");
@@ -86,7 +82,7 @@ const Payments = () => {
     navigate("/payments/history");
   };
 
-  const currentInvestor = investors.find(inv => inv._id === selectedInvestor);
+  const currentInvestor = investors.find((inv) => inv._id === selectedInvestor);
 
   return (
     <div className="payments-wrapper">
@@ -107,25 +103,6 @@ const Payments = () => {
               <MdMenu />
             </button>
             <h1 className="payments-page-title">Payments</h1>
-          </div>
-
-          <div className="payments-header-actions">
-            <button className="payments-icon-btn">
-              <MdSearch />
-            </button>
-            <button className="payments-icon-btn">
-              <MdSettings />
-            </button>
-            <button className="payments-icon-btn payments-notification-btn">
-              <MdNotifications />
-              <span className="payments-notification-dot"></span>
-            </button>
-            <div className="payments-user-profile">
-              <div className="payments-user-info">
-                <span className="payments-user-name">Abram Schleifer</span>
-                <span className="payments-user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </header>
 
@@ -157,9 +134,7 @@ const Payments = () => {
               <div className="payments-investor-selector">
                 <div className="payments-dynamic-investors">
                   <div className="payments-form-group">
-                    <label className="payments-form-label">
-                      Investor Name
-                    </label>
+                    <label className="payments-form-label">Investor Name</label>
                     <select
                       value={selectedInvestor}
                       onChange={(e) => setSelectedInvestor(e.target.value)}
@@ -185,7 +160,8 @@ const Payments = () => {
                   <div className="payments-stat-content">
                     <p className="payments-stat-label">Initial Investment</p>
                     <p className="payments-stat-value">
-                      ${currentInvestor?.initialInvestment?.toLocaleString() || 0}
+                      {currentInvestor?.initialInvestment?.toLocaleString() ||
+                        0}
                     </p>
                   </div>
                 </div>
@@ -209,7 +185,7 @@ const Payments = () => {
                   <div className="payments-stat-content">
                     <p className="payments-stat-label">Current Balance</p>
                     <p className="payments-stat-value">
-                      ${currentInvestor?.currentBalance?.toLocaleString() || 0}
+                      {currentInvestor?.currentBalance?.toLocaleString() || 0}
                     </p>
                   </div>
                 </div>

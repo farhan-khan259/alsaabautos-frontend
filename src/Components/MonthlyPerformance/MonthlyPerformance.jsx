@@ -1,297 +1,368 @@
 "use client";
 
-import { useState } from "react";
+import { jsPDF } from "jspdf";
+import { useEffect, useMemo, useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
-import {
-  MdArrowBack,
-  MdFileDownload,
-  MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
-} from "react-icons/md";
+import { MdArrowBack, MdFileDownload, MdMenu } from "react-icons/md";
+import * as XLSX from "xlsx";
 import Sidebar from "../Sidebar/Sidebar";
+import {
+  expensesApi,
+  paymentsApi,
+  reportsApi,
+  unitsApi,
+} from "../services/api";
 import "./MonthlyPerformance.css";
 
 const MonthlyPerformance = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [selectedYear, setSelectedYear] = useState("2025");
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear().toString()
+  );
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [showDetailView, setShowDetailView] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const monthlyData = [
-    {
-      month: "January",
-      carsSold: 22,
-      totalProfit: "$23,534",
-      totalExpense: "$12,231",
-      totalTax: "$834",
-      payments: "$500",
-      dailyData: [
-        {
-          date: "Jan 1",
-          carsSold: 2,
-          profit: "$2,134",
-          expense: "$1,045",
-          tax: "$68",
-          payment: "$42",
-        },
-        {
-          date: "Jan 2",
-          carsSold: 3,
-          profit: "$2,456",
-          expense: "$1,231",
-          tax: "$72",
-          payment: "$58",
-        },
-        {
-          date: "Jan 3",
-          carsSold: 1,
-          profit: "$1,845",
-          expense: "$945",
-          tax: "$65",
-          payment: "$35",
-        },
-        {
-          date: "Jan 4",
-          carsSold: 4,
-          profit: "$3,234",
-          expense: "$1,567",
-          tax: "$89",
-          payment: "$62",
-        },
-        {
-          date: "Jan 5",
-          carsSold: 2,
-          profit: "$2,045",
-          expense: "$1,123",
-          tax: "$71",
-          payment: "$45",
-        },
-        {
-          date: "Jan 6",
-          carsSold: 3,
-          profit: "$2,678",
-          expense: "$1,345",
-          tax: "$78",
-          payment: "$51",
-        },
-        {
-          date: "Jan 7",
-          carsSold: 1,
-          profit: "$1,567",
-          expense: "$856",
-          tax: "$62",
-          payment: "$38",
-        },
-        {
-          date: "Jan 8",
-          carsSold: 4,
-          profit: "$3,456",
-          expense: "$1,678",
-          tax: "$92",
-          payment: "$67",
-        },
-        {
-          date: "Jan 9",
-          carsSold: 2,
-          profit: "$2,234",
-          expense: "$1,134",
-          tax: "$74",
-          payment: "$46",
-        },
-        {
-          date: "Jan 10",
-          carsSold: 3,
-          profit: "$2,789",
-          expense: "$1,456",
-          tax: "$81",
-          payment: "$53",
-        },
-      ],
-    },
-    {
-      month: "February",
-      carsSold: 18,
-      totalProfit: "$19,845",
-      totalExpense: "$10,567",
-      totalTax: "$723",
-      payments: "$450",
-      dailyData: [
-        {
-          date: "Feb 1",
-          carsSold: 2,
-          profit: "$2,045",
-          expense: "$1,023",
-          tax: "$67",
-          payment: "$41",
-        },
-        {
-          date: "Feb 2",
-          carsSold: 3,
-          profit: "$2,567",
-          expense: "$1,345",
-          tax: "$74",
-          payment: "$57",
-        },
-        {
-          date: "Feb 3",
-          carsSold: 1,
-          profit: "$1,734",
-          expense: "$845",
-          tax: "$61",
-          payment: "$33",
-        },
-        {
-          date: "Feb 4",
-          carsSold: 4,
-          profit: "$3,123",
-          expense: "$1,456",
-          tax: "$87",
-          payment: "$64",
-        },
-        {
-          date: "Feb 5",
-          carsSold: 2,
-          profit: "$2,134",
-          expense: "$1,134",
-          tax: "$69",
-          payment: "$44",
-        },
-        {
-          date: "Feb 6",
-          carsSold: 3,
-          profit: "$2,456",
-          expense: "$1,234",
-          tax: "$75",
-          payment: "$52",
-        },
-        {
-          date: "Feb 7",
-          carsSold: 1,
-          profit: "$1,845",
-          expense: "$956",
-          tax: "$63",
-          payment: "$37",
-        },
-        {
-          date: "Feb 8",
-          carsSold: 2,
-          profit: "$2,067",
-          expense: "$1,067",
-          tax: "$68",
-          payment: "$45",
-        },
-        {
-          date: "Feb 9",
-          carsSold: 0,
-          profit: "$0",
-          expense: "$567",
-          tax: "$23",
-          payment: "$0",
-        },
-        {
-          date: "Feb 10",
-          carsSold: 0,
-          profit: "$0",
-          expense: "$345",
-          tax: "$15",
-          payment: "$0",
-        },
-      ],
-    },
-    {
-      month: "March",
-      carsSold: 25,
-      totalProfit: "$28,456",
-      totalExpense: "$14,789",
-      totalTax: "$956",
-      payments: "$625",
-      dailyData: [
-        {
-          date: "Mar 1",
-          carsSold: 3,
-          profit: "$3,456",
-          expense: "$1,678",
-          tax: "$92",
-          payment: "$67",
-        },
-        {
-          date: "Mar 2",
-          carsSold: 4,
-          profit: "$4,123",
-          expense: "$1,890",
-          tax: "$104",
-          payment: "$78",
-        },
-        {
-          date: "Mar 3",
-          carsSold: 2,
-          profit: "$2,345",
-          expense: "$1,234",
-          tax: "$78",
-          payment: "$52",
-        },
-        {
-          date: "Mar 4",
-          carsSold: 5,
-          profit: "$4,567",
-          expense: "$2,345",
-          tax: "$123",
-          payment: "$89",
-        },
-        {
-          date: "Mar 5",
-          carsSold: 3,
-          profit: "$3,234",
-          expense: "$1,567",
-          tax: "$89",
-          payment: "$67",
-        },
-        {
-          date: "Mar 6",
-          carsSold: 2,
-          profit: "$2,456",
-          expense: "$1,345",
-          tax: "$81",
-          payment: "$56",
-        },
-        {
-          date: "Mar 7",
-          carsSold: 1,
-          profit: "$1,845",
-          expense: "$956",
-          tax: "$63",
-          payment: "$45",
-        },
-        {
-          date: "Mar 8",
-          carsSold: 4,
-          profit: "$3,890",
-          expense: "$1,890",
-          tax: "$101",
-          payment: "$78",
-        },
-        {
-          date: "Mar 9",
-          carsSold: 2,
-          profit: "$2,234",
-          expense: "$1,134",
-          tax: "$74",
-          payment: "$52",
-        },
-        {
-          date: "Mar 10",
-          carsSold: 3,
-          profit: "$3,067",
-          expense: "$1,456",
-          tax: "$86",
-          payment: "$61",
-        },
-      ],
-    },
-    // ... Add similar data for other months
-  ];
+  const [rawData, setRawData] = useState({
+    units: [],
+    expenses: [],
+    reports: [],
+    payments: [],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [unitsRes, expensesRes, reportsRes, paymentsRes] =
+          await Promise.all([
+            unitsApi.getAll(),
+            expensesApi.getAll(),
+            reportsApi.getAll(),
+            paymentsApi.getAll(),
+          ]);
+
+        setRawData({
+          units: unitsRes.data.data.units,
+          expenses: expensesRes.data.data.expenses,
+          reports: reportsRes.data.data.reports,
+          payments: paymentsRes.data.data.payments,
+        });
+      } catch (error) {
+        console.error("Error fetching performance data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleExportToExcel = () => {
+    if (!processedData || processedData.length === 0) {
+      alert("No data to export");
+      return;
+    }
+
+    // Prepare data for Excel
+    const excelData = [];
+
+    processedData.forEach((monthData) => {
+      // Add month summary
+      excelData.push({
+        Month: monthData.month,
+        "Cars Sold": monthData.carsSold,
+        "Total Profit": monthData.totalProfit,
+        "Total Expense": monthData.totalExpense,
+        "Total Tax": monthData.totalTax,
+        Payments: monthData.payments,
+      });
+    });
+
+    // Create workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Set column widths
+    const columnWidths = [
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 15 },
+    ];
+    worksheet["!cols"] = columnWidths;
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Monthly Performance");
+
+    // Generate filename with date
+    const filename = `Monthly_Performance_${selectedYear}_${new Date().getTime()}.xlsx`;
+    XLSX.writeFile(workbook, filename);
+  };
+
+  const handleDownloadPDF = () => {
+    if (!processedData || processedData.length === 0) {
+      alert("No data to download");
+      return;
+    }
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let yPosition = 15;
+
+    // Add title
+    doc.setFontSize(18);
+    doc.text(
+      `Monthly Performance Report - ${selectedYear}`,
+      pageWidth / 2,
+      yPosition,
+      {
+        align: "center",
+      }
+    );
+    yPosition += 15;
+
+    // Add date
+    doc.setFontSize(10);
+    doc.text(
+      `Generated on: ${new Date().toLocaleDateString()}`,
+      pageWidth / 2,
+      yPosition,
+      {
+        align: "center",
+      }
+    );
+    yPosition += 10;
+
+    // Add summary for each month
+    doc.setFontSize(11);
+    processedData.forEach((monthData) => {
+      if (yPosition > pageHeight - 30) {
+        doc.addPage();
+        yPosition = 15;
+      }
+
+      // Month title
+      doc.setFont(undefined, "bold");
+      doc.text(`${monthData.month}`, 14, yPosition);
+      yPosition += 8;
+
+      // Month data
+      doc.setFont(undefined, "normal");
+      const monthDetails = [
+        `Cars Sold: ${monthData.carsSold}`,
+        `Total Profit: ${monthData.totalProfit}`,
+        `Total Expense: ${monthData.totalExpense}`,
+        `Total Tax: ${monthData.totalTax}`,
+        `Payments: ${monthData.payments}`,
+      ];
+
+      monthDetails.forEach((detail) => {
+        doc.text(detail, 20, yPosition);
+        yPosition += 6;
+      });
+
+      yPosition += 5;
+    });
+
+    // Generate filename
+    const filename = `Monthly_Performance_${selectedYear}.pdf`;
+    doc.save(filename);
+  };
+
+  const handleExportDailyData = () => {
+    if (!selectedMonth || !processedData[selectedMonth]) {
+      alert("Please select a month to export");
+      return;
+    }
+
+    const monthData = processedData[selectedMonth];
+
+    if (!monthData.dailyData || monthData.dailyData.length === 0) {
+      alert("No daily data available for this month");
+      return;
+    }
+
+    // Prepare daily data for Excel
+    const excelData = monthData.dailyData.map((daily) => ({
+      Date: daily.date,
+      "Cars Sold": daily.carsSold,
+      Profit: daily.profit,
+      Expense: daily.expense,
+      Tax: daily.tax,
+      Payment: daily.payment,
+    }));
+
+    // Create workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Set column widths
+    const columnWidths = [
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 15 },
+    ];
+    worksheet["!cols"] = columnWidths;
+
+    const sheetName = monthData.month || "Daily Data";
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+    // Generate filename
+    const filename = `Daily_Data_${monthData.month}_${selectedYear}.xlsx`;
+    XLSX.writeFile(workbook, filename);
+  };
+
+  const processedData = useMemo(() => {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    // Initialize structure for the selected year
+    const dataByMonth = {};
+    months.forEach((month, index) => {
+      dataByMonth[index] = {
+        month: month,
+        monthIndex: index,
+        carsSold: 0,
+        totalProfit: 0,
+        totalExpense: 0,
+        totalTax: 0,
+        payments: 0,
+        dailyMap: {}, // Helper to aggregate daily data
+      };
+    });
+
+    const getYearMonthDay = (dateStr) => {
+      if (!dateStr) return null;
+      const d = new Date(dateStr);
+      return {
+        year: d.getFullYear().toString(),
+        month: d.getMonth(), // 0-11
+        day: d.getDate(),
+      };
+    };
+
+    // 1. Process Units (Cars Sold, Tax) - using saleDate
+    rawData.units.forEach((unit) => {
+      if (unit.status === "sold" && unit.saleDate) {
+        const dateInfo = getYearMonthDay(unit.saleDate);
+        if (dateInfo && dateInfo.year === selectedYear) {
+          const mData = dataByMonth[dateInfo.month];
+          mData.carsSold += unit.quantity || 1;
+          mData.totalTax += unit.taxAmount || 0;
+
+          // Daily aggregation
+          if (!mData.dailyMap[dateInfo.day])
+            mData.dailyMap[dateInfo.day] = createDailyEntry(
+              dateInfo.month,
+              dateInfo.day
+            );
+          mData.dailyMap[dateInfo.day].carsSold += unit.quantity || 1;
+          mData.dailyMap[dateInfo.day].tax += unit.taxAmount || 0;
+        }
+      }
+    });
+
+    // 2. Process Reports (Profit) - using createdAt
+    rawData.reports.forEach((report) => {
+      const dateInfo = getYearMonthDay(report.createdAt);
+      if (dateInfo && dateInfo.year === selectedYear) {
+        const mData = dataByMonth[dateInfo.month];
+        mData.totalProfit += report.netProfit || 0;
+
+        if (!mData.dailyMap[dateInfo.day])
+          mData.dailyMap[dateInfo.day] = createDailyEntry(
+            dateInfo.month,
+            dateInfo.day
+          );
+        mData.dailyMap[dateInfo.day].profit += report.netProfit || 0;
+      }
+    });
+
+    // 3. Process Expenses - using date
+    rawData.expenses.forEach((expense) => {
+      const dateInfo = getYearMonthDay(expense.date);
+      if (dateInfo && dateInfo.year === selectedYear) {
+        const mData = dataByMonth[dateInfo.month];
+        mData.totalExpense += expense.amount || 0;
+
+        if (!mData.dailyMap[dateInfo.day])
+          mData.dailyMap[dateInfo.day] = createDailyEntry(
+            dateInfo.month,
+            dateInfo.day
+          );
+        mData.dailyMap[dateInfo.day].expense += expense.amount || 0;
+      }
+    });
+
+    // 4. Process Payments - using date
+    rawData.payments.forEach((payment) => {
+      const dateInfo = getYearMonthDay(payment.date);
+      if (dateInfo && dateInfo.year === selectedYear) {
+        const mData = dataByMonth[dateInfo.month];
+        mData.payments += payment.amount || 0;
+
+        if (!mData.dailyMap[dateInfo.day])
+          mData.dailyMap[dateInfo.day] = createDailyEntry(
+            dateInfo.month,
+            dateInfo.day
+          );
+        mData.dailyMap[dateInfo.day].payment += payment.amount || 0;
+      }
+    });
+
+    // Final formatting
+    return Object.values(dataByMonth).map((monthData) => {
+      // Convert dailyMap to array
+      const dailyData = Object.values(monthData.dailyMap).sort(
+        (a, b) => a.dayNum - b.dayNum
+      );
+
+      return {
+        ...monthData,
+        totalProfit: `${monthData.totalProfit.toLocaleString()}`,
+        totalExpense: `${monthData.totalExpense.toLocaleString()}`,
+        totalTax: `${monthData.totalTax.toLocaleString()}`,
+        payments: `${monthData.payments.toLocaleString()}`,
+        dailyData: dailyData.map((d) => ({
+          date: `${monthData.month.substring(0, 3)} ${d.dayNum}`,
+          carsSold: d.carsSold,
+          profit: `${d.profit.toLocaleString()}`,
+          expense: `${d.expense.toLocaleString()}`,
+          tax: `${d.tax.toLocaleString()}`,
+          payment: `${d.payment.toLocaleString()}`,
+        })),
+      };
+    });
+  }, [rawData, selectedYear]);
+
+  function createDailyEntry(monthIndex, day) {
+    return {
+      dayNum: day,
+      carsSold: 0,
+      profit: 0,
+      expense: 0,
+      tax: 0,
+      payment: 0,
+    };
+  }
 
   const handleMonthClick = (monthData) => {
     setSelectedMonth(monthData);
@@ -329,11 +400,19 @@ const MonthlyPerformance = () => {
           </div>
 
           <div className="monthlyperformance-header-actions">
-            <button className="monthlyperformance-export-btn">
+            <button
+              className="monthlyperformance-export-btn"
+              onClick={handleExportToExcel}
+              title="Export to Excel"
+            >
               <MdFileDownload />
               Export To Excel
             </button>
-            <button className="monthlyperformance-download-btn">
+            <button
+              className="monthlyperformance-download-btn"
+              onClick={handleDownloadPDF}
+              title="Download PDF"
+            >
               <MdFileDownload />
               Download Report PDF
             </button>
@@ -343,65 +422,72 @@ const MonthlyPerformance = () => {
 
       <div className="monthlyperformance-table-container">
         <div className="monthlyperformance-table-wrapper">
-          <table className="monthlyperformance-performance-table">
-            <thead>
-              <tr>
-                <th className="monthlyperformance-checkbox-cell">
-                  <input type="checkbox" />
-                </th>
-                <th>
-                  Month <span className="monthlyperformance-sort-icon">↕</span>
-                </th>
-                <th>
-                  Cars Sold{" "}
-                  <span className="monthlyperformance-sort-icon">↕</span>
-                </th>
-                <th>
-                  Total Profit{" "}
-                  <span className="monthlyperformance-sort-icon">↕</span>
-                </th>
-                <th>
-                  Total Expense{" "}
-                  <span className="monthlyperformance-sort-icon">↕</span>
-                </th>
-                <th>
-                  Total Tax{" "}
-                  <span className="monthlyperformance-sort-icon">↕</span>
-                </th>
-                <th>
-                  Payments{" "}
-                  <span className="monthlyperformance-sort-icon">↕</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {monthlyData.map((row, index) => (
-                <tr
-                  key={index}
-                  className="monthlyperformance-table-row"
-                  onClick={() => handleMonthClick(row)}
-                >
-                  <td className="monthlyperformance-checkbox-cell">
+          {loading ? (
+            <div style={{ padding: "20px", textAlign: "center" }}>
+              Loading...
+            </div>
+          ) : (
+            <table className="monthlyperformance-performance-table">
+              <thead>
+                <tr>
+                  <th className="monthlyperformance-checkbox-cell">
                     <input type="checkbox" />
-                  </td>
-                  <td>{row.month}</td>
-                  <td>{row.carsSold}</td>
-                  <td className="monthlyperformance-profit-cell">
-                    {row.totalProfit}
-                  </td>
-                  <td className="monthlyperformance-expense-cell">
-                    {row.totalExpense}
-                  </td>
-                  <td className="monthlyperformance-tax-cell">
-                    {row.totalTax}
-                  </td>
-                  <td className="monthlyperformance-payment-cell">
-                    {row.payments}
-                  </td>
+                  </th>
+                  <th>
+                    Month{" "}
+                    <span className="monthlyperformance-sort-icon">↕</span>
+                  </th>
+                  <th>
+                    Cars Sold{" "}
+                    <span className="monthlyperformance-sort-icon">↕</span>
+                  </th>
+                  <th>
+                    Total Profit{" "}
+                    <span className="monthlyperformance-sort-icon">↕</span>
+                  </th>
+                  <th>
+                    Total Expense{" "}
+                    <span className="monthlyperformance-sort-icon">↕</span>
+                  </th>
+                  <th>
+                    Total Tax{" "}
+                    <span className="monthlyperformance-sort-icon">↕</span>
+                  </th>
+                  <th>
+                    Payments{" "}
+                    <span className="monthlyperformance-sort-icon">↕</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {processedData.map((row, index) => (
+                  <tr
+                    key={index}
+                    className="monthlyperformance-table-row"
+                    onClick={() => handleMonthClick(row)}
+                  >
+                    <td className="monthlyperformance-checkbox-cell">
+                      <input type="checkbox" />
+                    </td>
+                    <td>{row.month}</td>
+                    <td>{row.carsSold}</td>
+                    <td className="monthlyperformance-profit-cell">
+                      {row.totalProfit}
+                    </td>
+                    <td className="monthlyperformance-expense-cell">
+                      {row.totalExpense}
+                    </td>
+                    <td className="monthlyperformance-tax-cell">
+                      {row.totalTax}
+                    </td>
+                    <td className="monthlyperformance-payment-cell">
+                      {row.payments}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="monthlyperformance-table-footer">
@@ -425,11 +511,14 @@ const MonthlyPerformance = () => {
             <button className="monthlyperformance-pagination-btn monthlyperformance-pagination-active">
               1
             </button>
-            <button className="monthlyperformance-pagination-btn">2</button>
-            <button className="monthlyperformance-pagination-btn">3</button>
-            <span className="monthlyperformance-pagination-ellipsis">...</span>
-            <button className="monthlyperformance-pagination-btn">16</button>
-            <button className="monthlyperformance-pagination-btn monthlyperformance-pagination-next">
+            {/* Placeholder pagination logic */}
+            <button className="monthlyperformance-pagination-btn" disabled>
+              2
+            </button>
+            <button
+              className="monthlyperformance-pagination-btn monthlyperformance-pagination-next"
+              disabled
+            >
               Next ›
             </button>
           </div>
@@ -508,22 +597,33 @@ const MonthlyPerformance = () => {
               </tr>
             </thead>
             <tbody>
-              {selectedMonth?.dailyData.map((row, index) => (
-                <tr key={index}>
-                  <td>{row.date}</td>
-                  <td>{row.carsSold}</td>
-                  <td className="monthlyperformance-profit-cell">
-                    {row.profit}
-                  </td>
-                  <td className="monthlyperformance-expense-cell">
-                    {row.expense}
-                  </td>
-                  <td className="monthlyperformance-tax-cell">{row.tax}</td>
-                  <td className="monthlyperformance-payment-cell">
-                    {row.payment}
+              {selectedMonth?.dailyData.length > 0 ? (
+                selectedMonth.dailyData.map((row, index) => (
+                  <tr key={index}>
+                    <td>{row.date}</td>
+                    <td>{row.carsSold}</td>
+                    <td className="monthlyperformance-profit-cell">
+                      {row.profit}
+                    </td>
+                    <td className="monthlyperformance-expense-cell">
+                      {row.expense}
+                    </td>
+                    <td className="monthlyperformance-tax-cell">{row.tax}</td>
+                    <td className="monthlyperformance-payment-cell">
+                      {row.payment}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="6"
+                    style={{ textAlign: "center", padding: "20px" }}
+                  >
+                    No activity recorded for this month.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -534,22 +634,19 @@ const MonthlyPerformance = () => {
             Export Daily Data
           </button>
           <div className="monthlyperformance-detail-pagination">
-            <button className="monthlyperformance-pagination-btn monthlyperformance-pagination-prev">
+            <button
+              className="monthlyperformance-pagination-btn monthlyperformance-pagination-prev"
+              disabled
+            >
               ‹ Prev Week
             </button>
             <button className="monthlyperformance-pagination-btn monthlyperformance-pagination-active">
               Week 1
             </button>
-            <button className="monthlyperformance-pagination-btn">
-              Week 2
-            </button>
-            <button className="monthlyperformance-pagination-btn">
-              Week 3
-            </button>
-            <button className="monthlyperformance-pagination-btn">
-              Week 4
-            </button>
-            <button className="monthlyperformance-pagination-btn monthlyperformance-pagination-next">
+            <button
+              className="monthlyperformance-pagination-btn monthlyperformance-pagination-next"
+              disabled
+            >
               Next Week ›
             </button>
           </div>
@@ -583,27 +680,6 @@ const MonthlyPerformance = () => {
                 ? `${selectedMonth?.month} ${selectedYear} Performance`
                 : "Monthly Performance"}
             </h1>
-          </div>
-
-          <div className="monthlyperformance-header-actions">
-            <button className="monthlyperformance-icon-btn">
-              <MdSearch />
-            </button>
-            <button className="monthlyperformance-icon-btn">
-              <MdSettings />
-            </button>
-            <button className="monthlyperformance-icon-btn monthlyperformance-notification-btn">
-              <MdNotifications />
-              <span className="monthlyperformance-notification-dot"></span>
-            </button>
-            <div className="monthlyperformance-user-profile">
-              <div className="monthlyperformance-user-info">
-                <span className="monthlyperformance-user-name">
-                  Abram Schleifer
-                </span>
-                <span className="monthlyperformance-user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </div>
 

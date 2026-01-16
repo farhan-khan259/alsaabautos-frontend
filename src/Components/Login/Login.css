@@ -1,21 +1,41 @@
+/* ===============================
+   Global Reset
+================================ */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===============================
+   Page Layout
+================================ */
 .login-page {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #d1d5db;
+    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
     padding: 1rem;
 }
 
+/* ===============================
+   Card
+================================ */
 .login-card {
-    background: white;
-    border-radius: 12px;
-    padding: 3rem;
-    max-width: 460px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 3rem 2.5rem;
+    max-width: 440px;
     width: 100%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    animation: fadeIn 0.4s ease-in-out;
 }
 
+/* ===============================
+   Header
+================================ */
 .login-header {
     display: flex;
     align-items: center;
@@ -24,49 +44,159 @@
     margin-bottom: 2rem;
 }
 
-.login-logo {
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2rem;
+.login-logo img {
+    width: 48px;
+    height: auto;
 }
 
 .login-brand {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #1f2937;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #111827;
 }
 
+/* ===============================
+   Title
+================================ */
 .login-title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #374151;
     text-align: center;
     margin-bottom: 2rem;
     line-height: 1.6;
 }
 
+/* ===============================
+   Form
+================================ */
 .login-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.login-btn {
-    width: 100%;
-    padding: 0.875rem;
-    font-size: 1rem;
-    margin-top: 0.5rem;
+/* ===============================
+   Input Group
+================================ */
+.form-group {
+    position: relative;
 }
 
+.form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.85rem 0.9rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    border: 1.5px solid #d1d5db;
+    outline: none;
+    background-color: #f9fafb;
+    transition: all 0.25s ease;
+}
+
+/* Input Focus */
+.form-input:focus {
+    border-color: #2563eb;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Placeholder */
+.form-input::placeholder {
+    color: #9ca3af;
+}
+
+/* ===============================
+   Error Message
+================================ */
+.login-error {
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* ===============================
+   Button
+================================ */
+.login-btn {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    background: #ff2741;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.login-btn:hover {
+    background: #ff2741;
+}
+
+
+
+/* ===============================
+   Animations
+================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===============================
+   Responsive Design
+================================ */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .login-card {
+        padding: 2.5rem 2rem;
+    }
+
+    .login-brand {
+        font-size: 1.7rem;
+    }
+}
+
+/* Mobile */
 @media (max-width: 480px) {
     .login-card {
-        padding: 2rem;
+        padding: 2rem 1.5rem;
+    }
+
+    .login-brand {
+        font-size: 1.5rem;
     }
 
     .login-title {
-        font-size: 1.125rem;
+        font-size: 1rem;
+    }
+
+    .form-input {
+        font-size: 0.9rem;
+    }
+
+    .login-btn {
+        font-size: 0.95rem;
     }
 }

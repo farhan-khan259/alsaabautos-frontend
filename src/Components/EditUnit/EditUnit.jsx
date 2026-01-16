@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
-  MdUpload,
-} from "react-icons/md";
+import { MdMenu, MdUpload } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { unitsApi } from "../services/api";
@@ -45,8 +39,9 @@ const EditUnit = () => {
         const response = await unitsApi.getOne(id);
         const data = response.data.data.unit;
         // Format dates for input type="date"
-        const formatDate = (dateString) => dateString ? new Date(dateString).toISOString().split('T')[0] : "";
-        
+        const formatDate = (dateString) =>
+          dateString ? new Date(dateString).toISOString().split("T")[0] : "";
+
         setFormData({
           title: data.title || "",
           make: data.make || "",
@@ -106,9 +101,9 @@ const EditUnit = () => {
         expenses: Number(formData.expenses),
         taxAmount: Number(formData.taxAmount),
         saleAmount: Number(formData.saleAmount),
-        investors: formData.investors.filter(inv => inv.trim() !== "")
+        investors: formData.investors.filter((inv) => inv.trim() !== ""),
       };
-      
+
       await unitsApi.update(id, payload);
       alert("Unit updated successfully!");
       navigate("/units");
@@ -146,28 +141,6 @@ const EditUnit = () => {
               <MdMenu />
             </button>
             <h1 className="editunit-page-title">Edit Unit</h1>
-          </div>
-
-          <div className="editunit-header-actions">
-            <button className="editunit-icon-btn" aria-label="Search">
-              <MdSearch />
-            </button>
-            <button className="editunit-icon-btn" aria-label="Settings">
-              <MdSettings />
-            </button>
-            <button
-              className="editunit-icon-btn editunit-notification-btn"
-              aria-label="Notifications"
-            >
-              <MdNotifications />
-              <span className="editunit-notification-dot"></span>
-            </button>
-            <div className="editunit-user-profile">
-              <div className="editunit-user-info">
-                <span className="editunit-user-name">Abram Schleifer</span>
-                <span className="editunit-user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -470,12 +443,12 @@ const EditUnit = () => {
                     </div>
                   ))}
                 </div>
-                
+
                 <button
                   type="button"
                   className="addunit-add-investor-btn"
                   onClick={addInvestor}
-                  style={{marginTop: '10px'}}
+                  style={{ marginTop: "10px" }}
                 >
                   Add Another Investor
                 </button>

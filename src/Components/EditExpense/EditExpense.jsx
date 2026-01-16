@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MdMenu, MdNotifications, MdSearch, MdSettings } from "react-icons/md";
+import { MdMenu } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { expensesApi } from "../services/api";
@@ -25,7 +25,8 @@ const EditExpense = () => {
         setLoading(true);
         const response = await expensesApi.getOne(id);
         const data = response.data.data.expense;
-        const formatDate = (dateString) => dateString ? new Date(dateString).toISOString().split('T')[0] : "";
+        const formatDate = (dateString) =>
+          dateString ? new Date(dateString).toISOString().split("T")[0] : "";
 
         setExpenseData({
           date: formatDate(data.date),
@@ -60,7 +61,7 @@ const EditExpense = () => {
     try {
       const payload = {
         ...expenseData,
-        amount: Number(expenseData.amount)
+        amount: Number(expenseData.amount),
       };
       await expensesApi.update(id, payload);
       alert("Expense updated successfully!");
@@ -107,24 +108,6 @@ const EditExpense = () => {
             </button>
             <h1 className="editexpense-page-title">Edit Expense</h1>
           </div>
-
-          <div className="editexpense-header-actions">
-            <button className="editexpense-icon-btn">
-              <MdSearch />
-            </button>
-            <button className="editexpense-icon-btn">
-              <MdSettings />
-            </button>
-            <button className="editexpense-icon-btn editexpense-notification-btn">
-              <MdNotifications />
-              <span className="editexpense-notification-dot"></span>
-            </button>
-
-            <div className="editexpense-user-info">
-              <span className="editexpense-user-name">Abram Schleifer</span>
-              <span className="editexpense-user-role">Admin</span>
-            </div>
-          </div>
         </div>
 
         {/* CONTENT */}
@@ -134,9 +117,9 @@ const EditExpense = () => {
               <h2 className="editexpense-form-title">Expense Details</h2>
 
               <div className="editexpense-form-actions">
-                <button 
-                  className="editexpense-remove-btn" 
-                  type="button" 
+                <button
+                  className="editexpense-remove-btn"
+                  type="button"
                   onClick={handleDelete}
                 >
                   Delete

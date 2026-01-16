@@ -1,13 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  MdAdd,
-  MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
-} from "react-icons/md";
+import { useEffect, useState } from "react";
+import { MdAdd, MdMenu } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { reportsApi } from "../services/api";
@@ -50,23 +44,22 @@ const EditReport = () => {
           data.investors.forEach((inv, index) => {
             newInvestorData[`investor${index + 1}`] = {
               name: inv.name,
-              profit: inv.profit
+              profit: inv.profit,
             };
             count = index + 1;
           });
         }
-        
+
         // Ensure at least 2 investors are initialized for UI consistency
         if (count < 2) {
-            for (let i = count + 1; i <= 2; i++) {
-                newInvestorData[`investor${i}`] = { name: "", profit: "" };
-            }
-            count = 2;
+          for (let i = count + 1; i <= 2; i++) {
+            newInvestorData[`investor${i}`] = { name: "", profit: "" };
+          }
+          count = 2;
         }
 
         setInvestorData(newInvestorData);
         setInvestors(count);
-
       } catch (error) {
         console.error("Error fetching report:", error);
         alert("Failed to fetch report details");
@@ -114,10 +107,11 @@ const EditReport = () => {
       const investorsArray = Object.keys(investorData).reduce((acc, key) => {
         if (parseInt(key.replace("investor", "")) <= investors) {
           const inv = investorData[key];
-          if (inv.name && inv.profit !== "") { // Check if valid
-             acc.push({
+          if (inv.name && inv.profit !== "") {
+            // Check if valid
+            acc.push({
               name: inv.name,
-              profit: Number(inv.profit)
+              profit: Number(inv.profit),
             });
           }
         }
@@ -163,24 +157,6 @@ const EditReport = () => {
             </button>
             <h1 className="editreport-page-title">Edit Report</h1>
           </div>
-
-          <div className="editreport-header-actions">
-            <button className="editreport-icon-btn">
-              <MdSearch />
-            </button>
-            <button className="editreport-icon-btn">
-              <MdSettings />
-            </button>
-            <button className="editreport-icon-btn editreport-notification-btn">
-              <MdNotifications />
-              <span className="editreport-notification-dot"></span>
-            </button>
-
-            <div className="editreport-user">
-              <strong className="editreport-user-name">Abram Schleifer</strong>
-              <small className="editreport-user-role">Admin</small>
-            </div>
-          </div>
         </div>
 
         {/* CONTENT */}
@@ -190,7 +166,11 @@ const EditReport = () => {
               <h2 className="editreport-card-title">Details</h2>
 
               <div className="editreport-actions">
-                <button type="button" className="editreport-discard" onClick={() => navigate("/pl")}>
+                <button
+                  type="button"
+                  className="editreport-discard"
+                  onClick={() => navigate("/pl")}
+                >
                   Discard
                 </button>
                 <button type="submit" className="editreport-save">
@@ -225,9 +205,11 @@ const EditReport = () => {
               {Array.from({ length: investors }, (_, i) => {
                 const investorKey = `investor${i + 1}`;
                 return (
-                  <div key={investorKey} style={{ display: 'contents' }}>
+                  <div key={investorKey} style={{ display: "contents" }}>
                     <div className="editreport-field">
-                      <label className="editreport-field-label">Investor {i + 1}</label>
+                      <label className="editreport-field-label">
+                        Investor {i + 1}
+                      </label>
                       <select
                         name={investorKey}
                         value={investorData[investorKey]?.name || ""}

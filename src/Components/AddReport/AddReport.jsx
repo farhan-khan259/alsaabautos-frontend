@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  MdAdd,
-  MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
-} from "react-icons/md";
+import { MdAdd, MdMenu } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { reportsApi } from "../services/api";
@@ -71,7 +65,7 @@ const AddReport = () => {
           if (inv.name && inv.profit) {
             acc.push({
               name: inv.name,
-              profit: Number(inv.profit)
+              profit: Number(inv.profit),
             });
           }
         }
@@ -117,26 +111,6 @@ const AddReport = () => {
             </button>
             <h1 className="addreport-page-title">Add Report</h1>
           </div>
-
-          <div className="addreport-header-actions">
-            <button className="addreport-icon-btn">
-              <MdSearch />
-            </button>
-            <button className="addreport-icon-btn">
-              <MdSettings />
-            </button>
-            <button className="addreport-icon-btn addreport-notification-btn">
-              <MdNotifications />
-              <span className="addreport-notification-dot"></span>
-            </button>
-
-            <div className="addreport-user-profile">
-              <div className="addreport-user-info">
-                <span className="addreport-user-name">Abram Schleifer</span>
-                <span className="addreport-user-role">Admin</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Content */}
@@ -146,9 +120,15 @@ const AddReport = () => {
               <h2 className="addreport-form-title">Details</h2>
 
               <div className="addreport-form-header-actions">
-                <button className="addreport-remove-btn" type="button" onClick={() => navigate("/pl")}>Cancel</button>
-                <button 
-                  className="addreport-save-btn" 
+                <button
+                  className="addreport-remove-btn"
+                  type="button"
+                  onClick={() => navigate("/pl")}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="addreport-save-btn"
                   onClick={handleSubmit}
                   disabled={loading}
                 >

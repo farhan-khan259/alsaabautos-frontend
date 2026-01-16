@@ -1,18 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
-  MdDirectionsCar,
   MdAttachMoney,
+  MdDirectionsCar,
+  MdMenu,
   MdPeople,
   MdReceipt,
-  MdMenu,
-  MdSearch,
-  MdSettings,
-  MdNotifications,
 } from "react-icons/md";
 import Sidebar from "../Sidebar/Sidebar";
-import { unitsApi, expensesApi, reportsApi, investorsApi } from "../services/api";
+import {
+  expensesApi,
+  investorsApi,
+  reportsApi,
+  unitsApi,
+} from "../services/api";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -71,12 +73,13 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [unitsRes, expensesRes, reportsRes, investorsRes] = await Promise.all([
-          unitsApi.getAll(),
-          expensesApi.getAll(),
-          reportsApi.getAll(),
-          investorsApi.getAll()
-        ]);
+        const [unitsRes, expensesRes, reportsRes, investorsRes] =
+          await Promise.all([
+            unitsApi.getAll(),
+            expensesApi.getAll(),
+            reportsApi.getAll(),
+            investorsApi.getAll(),
+          ]);
 
         const units = unitsRes.data.data.units;
         const expensesList = expensesRes.data.data.expenses;
@@ -85,13 +88,29 @@ const Dashboard = () => {
 
         // Calculate Stats
         const totalCars = units.length;
-        const carsSold = units.filter(u => u.status && u.status.toLowerCase() === 'sold').length;
-        const carsInStock = units.filter(u => u.status && u.status.toLowerCase() === 'in stock').length;
-        const totalProfit = reports.reduce((acc, curr) => acc + (curr.netProfit || 0), 0);
-        const totalExpenses = expensesList.reduce((acc, curr) => acc + (curr.amount || 0), 0);
-        const totalTax = units.reduce((acc, curr) => acc + (curr.taxAmount || 0), 0);
+        const carsSold = units.filter(
+          (u) => u.status && u.status.toLowerCase() === "sold"
+        ).length;
+        const carsInStock = units.filter(
+          (u) => u.status && u.status.toLowerCase() === "in stock"
+        ).length;
+        const totalProfit = reports.reduce(
+          (acc, curr) => acc + (curr.netProfit || 0),
+          0
+        );
+        const totalExpenses = expensesList.reduce(
+          (acc, curr) => acc + (curr.amount || 0),
+          0
+        );
+        const totalTax = units.reduce(
+          (acc, curr) => acc + (curr.taxAmount || 0),
+          0
+        );
         const totalInvestors = investors.length;
-        const totalInvestment = investors.reduce((acc, curr) => acc + (curr.initialInvestment || 0), 0);
+        const totalInvestment = investors.reduce(
+          (acc, curr) => acc + (curr.initialInvestment || 0),
+          0
+        );
 
         setStats([
           {
@@ -108,13 +127,13 @@ const Dashboard = () => {
           },
           {
             title: "Total Profit",
-            value: `$${totalProfit.toLocaleString()}`,
+            value: `${totalProfit.toLocaleString()}`,
             icon: <MdAttachMoney />,
             color: "#f59e0b",
           },
           {
             title: "Expenses",
-            value: `$${totalExpenses.toLocaleString()}`,
+            value: `${totalExpenses.toLocaleString()}`,
             icon: <MdReceipt />,
             color: "#ef4444",
           },
@@ -126,7 +145,7 @@ const Dashboard = () => {
           },
           {
             title: "Total Tax",
-            value: `$${totalTax.toLocaleString()}`,
+            value: `${totalTax.toLocaleString()}`,
             icon: <MdAttachMoney />,
             color: "#06b6d4",
           },
@@ -138,12 +157,11 @@ const Dashboard = () => {
           },
           {
             title: "Total Investment",
-            value: `$${totalInvestment.toLocaleString()}`,
+            value: `${totalInvestment.toLocaleString()}`,
             icon: <MdAttachMoney />,
             color: "#14b8a6",
           },
         ]);
-
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
@@ -172,26 +190,6 @@ const Dashboard = () => {
               <MdMenu />
             </button>
             <h1 className="dashboard-title">Dashboard</h1>
-          </div>
-
-          <div className="dashboard-header-actions">
-            <button className="dashboard-icon-btn" aria-label="Search">
-              <MdSearch />
-            </button>
-            <button className="dashboard-icon-btn" aria-label="Settings">
-              <MdSettings />
-            </button>
-            <button
-              className="dashboard-icon-btn dashboard-notification-btn"
-              aria-label="Notifications"
-            >
-              <MdNotifications />
-              <span className="dashboard-notification-dot"></span>
-            </button>
-            <div className="dashboard-user-info">
-              <strong className="dashboard-user-name">Abram Schleifer</strong>
-              <small className="dashboard-user-role">Admin</small>
-            </div>
           </div>
         </header>
 

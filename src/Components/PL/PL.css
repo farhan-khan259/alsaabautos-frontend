@@ -314,7 +314,7 @@
     flex-wrap: wrap;
 }
 
-.pl-action-btn {
+.pl-dashboard-action-btn {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -354,6 +354,53 @@
     color: #475569;
     transform: translateY(-1px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Action Buttons in Table */
+.pl-action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.pl-action-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    min-width: unset;
+}
+
+.pl-edit-btn {
+    color: #2797ff;
+    border-color: #bfdbfe;
+}
+
+.pl-edit-btn:hover {
+    background: #dbeafe;
+    border-color: #2797ff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.pl-delete-btn {
+    color: #ef4444;
+    border-color: #fecaca;
+}
+
+.pl-delete-btn:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
 }
 
 /* Stats Section */

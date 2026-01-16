@@ -13,6 +13,7 @@ import {
   MdShowChart,
 } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 import logo from "../../Assets/Pictures/logo.png";
 import "./Sidebar.css";
@@ -20,45 +21,52 @@ import "./Sidebar.css";
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
 
   const menuItems = [
-    { id: "dashboard", path: "/", label: "Dashboard", icon: <MdDashboard /> },
+    { id: "dashboard", path: "/", label: t.dashboard, icon: <MdDashboard /> },
     {
       id: "units",
       path: "/units",
-      label: "Units",
+      label: t.units,
       icon: <MdDirectionsCar />,
       badge: null,
     },
     {
       id: "investors",
       path: "/investors",
-      label: "Investors",
+      label: t.investors,
       icon: <MdPeople />,
     },
     {
       id: "performance",
       path: "/performance",
-      label: "Performance",
+      label: t.performance,
       icon: <MdShowChart />,
     },
-    { id: "p&l", path: "/pl", label: "P&L", icon: <MdAttachMoney /> },
+    { id: "p&l", path: "/pl", label: t.pl, icon: <MdAttachMoney /> },
     {
       id: "expenses",
       path: "/expenses",
-      label: "Expenses",
+      label: t.expenses,
       icon: <MdAccountBalanceWallet />,
     },
     {
       id: "payments",
       path: "/payments",
-      label: "Payments",
+      label: t.payments,
       icon: <MdPayments />,
     },
     {
       id: "setting",
       path: "/setting",
-      label: "Setting",
+      label: t.setting,
       icon: <MdSettings />,
       badge: 5,
     },
@@ -79,13 +87,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const handleNavClick = () => {
-    if (window.innerWidth <= 768) {
-      setSidebarOpen(false);
-    }
-  };
-
-  const handleLogout = () => {
-    console.log("Logout clicked");
     if (window.innerWidth <= 768) {
       setSidebarOpen(false);
     }
@@ -157,7 +158,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           <span className="sidebar-nav-icon">
             <MdLogout />
           </span>
-          {sidebarOpen && <span className="sidebar-nav-label">Logout</span>}
+          {sidebarOpen && <span className="sidebar-nav-label">{t.logout}</span>}
         </button>
       </div>
 

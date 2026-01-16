@@ -5,9 +5,7 @@ import {
   MdDelete,
   MdEdit,
   MdMenu,
-  MdNotifications,
   MdSearch,
-  MdSettings,
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
@@ -47,8 +45,10 @@ const Investors = () => {
   // Filter investors based on search term
   const filteredInvestors = investorsData.filter(
     (investor) =>
-      (investor.name && investor.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (investor.investorId && investor.investorId.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (investor.name &&
+        investor.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (investor.investorId &&
+        investor.investorId.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (investor.contactNo && investor.contactNo.includes(searchTerm))
   );
 
@@ -160,28 +160,6 @@ const Investors = () => {
               <MdMenu />
             </button>
             <h1 className="investors-page-title">Investors</h1>
-          </div>
-
-          <div className="investors-header-actions">
-            <button className="investors-icon-btn" aria-label="Search">
-              <MdSearch />
-            </button>
-            <button className="investors-icon-btn" aria-label="Settings">
-              <MdSettings />
-            </button>
-            <button
-              className="investors-icon-btn investors-notification-btn"
-              aria-label="Notifications"
-            >
-              <MdNotifications />
-              <span className="investors-notification-dot"></span>
-            </button>
-            <div className="investors-user-profile">
-              <div className="investors-user-info">
-                <span className="investors-user-name">Abram Schleifer</span>
-                <span className="investors-user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -317,21 +295,27 @@ const Investors = () => {
                             aria-label={`Select ${investor.name}`}
                           />
                         </td>
-                        <td className="investors-investor-id">{investor.investorId}</td>
+                        <td className="investors-investor-id">
+                          {investor.investorId}
+                        </td>
                         <td className="investors-investor-name">
                           {investor.name}
                         </td>
-                        <td className="investors-contact">{investor.contactNo}</td>
+                        <td className="investors-contact">
+                          {investor.contactNo}
+                        </td>
                         <td className="investors-initial-investment">
-                          ${investor.initialInvestment}
+                          {investor.initialInvestment}
                         </td>
                         <td className="investors-current-balance">
-                          ${investor.currentBalance}
+                          {investor.currentBalance}
                         </td>
                         <td className="investors-join-date">
                           {new Date(investor.joinDate).toLocaleDateString()}
                         </td>
-                        <td className="investors-share">{investor.profitShare}%</td>
+                        <td className="investors-share">
+                          {investor.profitShare}%
+                        </td>
                         <td className="investors-status-cell">
                           <span
                             className={`investors-status-badge investors-status-${investor.status

@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
-  MdUpload,
-} from "react-icons/md";
+import { MdClose, MdMenu, MdUpload } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { unitsApi } from "../services/api";
@@ -34,6 +28,10 @@ const AddUnit = () => {
     status: "",
     investors: [""],
   });
+  const [images, setImages] = useState([]);
+  const [invoices, setInvoices] = useState([]);
+  const [imagePreview, setImagePreview] = useState([]);
+  const [invoicePreview, setInvoicePreview] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -54,24 +52,75 @@ const AddUnit = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    setImages([...images, ...files]);
+
+    // Create previews for new files
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreview([...imagePreview, ...newPreviews]);
+  };
+
+  const handleInvoiceUpload = (e) => {
+    const files = Array.from(e.target.files);
+    setInvoices([...invoices, ...files]);
+
+    // Create previews for new files
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setInvoicePreview([...invoicePreview, ...newPreviews]);
+  };
+
+  const removeImage = (index) => {
+    const newImages = images.filter((_, i) => i !== index);
+    const newPreviews = imagePreview.filter((_, i) => i !== index);
+    setImages(newImages);
+    setImagePreview(newPreviews);
+  };
+
+  const removeInvoice = (index) => {
+    const newInvoices = invoices.filter((_, i) => i !== index);
+    const newPreviews = invoicePreview.filter((_, i) => i !== index);
+    setInvoices(newInvoices);
+    setInvoicePreview(newPreviews);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Map form data to backend expected format if needed
-      // Current model expects: title, make, number, quantity, customerName, vinNumber, lotNumber, purchaseAuction, purchaseAmount, expenses, purchaseDate, taxAmount, saleAuction, saleAmount, saleDate, status, investors
-      const payload = {
-        ...formData,
-        quantity: Number(formData.quantity),
-        purchaseAmount: Number(formData.purchaseAmount),
-        expenses: Number(formData.expenses),
-        taxAmount: Number(formData.taxAmount),
-        saleAmount: Number(formData.saleAmount),
-        // Filter out empty investor strings
-        investors: formData.investors.filter(inv => inv.trim() !== "")
-      };
+      // Create FormData to handle files and form fields
+      const formPayload = new FormData();
 
-      await unitsApi.create(payload);
+      // Add form fields
+      Object.keys(formData).forEach((key) => {
+        if (key === "investors") {
+          formPayload.append(
+            key,
+            JSON.stringify(formData[key].filter((inv) => inv.trim() !== ""))
+          );
+        } else if (formData[key] !== "") {
+          formPayload.append(key, formData[key]);
+        }
+      });
+
+      // Convert string numbers to actual numbers
+      formPayload.set("quantity", Number(formData.quantity));
+      formPayload.set("purchaseAmount", Number(formData.purchaseAmount));
+      formPayload.set("expenses", Number(formData.expenses));
+      formPayload.set("taxAmount", Number(formData.taxAmount));
+      formPayload.set("saleAmount", Number(formData.saleAmount));
+
+      // Add image files
+      images.forEach((image) => {
+        formPayload.append("images", image);
+      });
+
+      // Add invoice files
+      invoices.forEach((invoice) => {
+        formPayload.append("invoices", invoice);
+      });
+
+      await unitsApi.createWithFiles(formPayload);
       alert("Unit added successfully!");
       navigate("/units");
     } catch (error) {
@@ -102,6 +151,10 @@ const AddUnit = () => {
       status: "",
       investors: [""],
     });
+    setImages([]);
+    setInvoices([]);
+    setImagePreview([]);
+    setInvoicePreview([]);
   };
 
   return (
@@ -124,25 +177,6 @@ const AddUnit = () => {
             </button>
             <h1 className="addunit-page-title">Add Unit</h1>
           </div>
-
-          <div className="addunit-header-actions">
-            <button className="addunit-icon-btn">
-              <MdSearch />
-            </button>
-            <button className="addunit-icon-btn">
-              <MdSettings />
-            </button>
-            <button className="addunit-icon-btn addunit-notification-btn">
-              <MdNotifications />
-              <span className="addunit-notification-dot"></span>
-            </button>
-            <div className="addunit-user-profile">
-              <div className="addunit-user-info">
-                <span className="addunit-user-name">Abram Schleifer</span>
-                <span className="addunit-user-role">Admin</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Main Form Content */}
@@ -157,7 +191,11 @@ const AddUnit = () => {
                 >
                   Reset
                 </button>
-                <button type="submit" className="addunit-btn-add" disabled={loading}>
+                <button
+                  type="submit"
+                  className="addunit-btn-add"
+                  disabled={loading}
+                >
                   {loading ? "Adding..." : "Add Unit"}
                 </button>
               </div>
@@ -394,9 +432,20 @@ const AddUnit = () => {
 
                 <div className="addunit-upload-sections">
                   <div className="addunit-upload-box">
-                    <button type="button" className="addunit-upload-btn">
-                      <MdUpload /> Upload Involve
-                    </button>
+                    <label
+                      htmlFor="invoice-upload"
+                      className="addunit-upload-btn"
+                    >
+                      <MdUpload /> Upload Invoice
+                    </label>
+                    <input
+                      id="invoice-upload"
+                      type="file"
+                      multiple
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                      onChange={handleInvoiceUpload}
+                      style={{ display: "none" }}
+                    />
                     <div className="addunit-upload-area">
                       <p className="addunit-upload-text">Click to browse or</p>
                       <p className="addunit-upload-text">
@@ -404,11 +453,45 @@ const AddUnit = () => {
                       </p>
                       <p className="addunit-upload-hint">Max file size: 10MB</p>
                     </div>
+                    {invoicePreview.length > 0 && (
+                      <div className="addunit-preview-container">
+                        <h4>Invoice Files:</h4>
+                        <div className="addunit-preview-grid">
+                          {invoicePreview.map((preview, index) => (
+                            <div key={index} className="addunit-preview-item">
+                              <div className="addunit-preview-file">
+                                <span className="addunit-file-name">
+                                  {invoices[index]?.name || `File ${index + 1}`}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                className="addunit-remove-btn"
+                                onClick={() => removeInvoice(index)}
+                              >
+                                <MdClose />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="addunit-upload-box">
-                    <button type="button" className="addunit-upload-btn">
+                    <label
+                      htmlFor="image-upload"
+                      className="addunit-upload-btn"
+                    >
                       <MdUpload /> Upload Cars Pictures
-                    </button>
+                    </label>
+                    <input
+                      id="image-upload"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      style={{ display: "none" }}
+                    />
                     <div className="addunit-upload-area">
                       <p className="addunit-upload-text">Click to browse or</p>
                       <p className="addunit-upload-text">
@@ -416,6 +499,29 @@ const AddUnit = () => {
                       </p>
                       <p className="addunit-upload-hint">Max file size: 10MB</p>
                     </div>
+                    {imagePreview.length > 0 && (
+                      <div className="addunit-preview-container">
+                        <h4>Car Pictures:</h4>
+                        <div className="addunit-preview-grid">
+                          {imagePreview.map((preview, index) => (
+                            <div key={index} className="addunit-preview-item">
+                              <img
+                                src={preview}
+                                alt={`Preview ${index + 1}`}
+                                className="addunit-preview-image"
+                              />
+                              <button
+                                type="button"
+                                className="addunit-remove-btn"
+                                onClick={() => removeImage(index)}
+                              >
+                                <MdClose />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -431,7 +537,7 @@ const AddUnit = () => {
                       </label>
                       {/* You might want to fetch the list of investors from backend to populate this select */}
                       <input
-                        type="text" 
+                        type="text"
                         value={investor}
                         onChange={(e) =>
                           handleInvestorChange(index, e.target.value)

@@ -4,9 +4,7 @@ import {
   MdEdit,
   MdFilterList,
   MdMenu,
-  MdNotifications,
   MdSearch,
-  MdSettings,
   MdViewList,
   MdViewModule,
 } from "react-icons/md";
@@ -35,6 +33,7 @@ const Units = () => {
     try {
       setLoading(true);
       const response = await unitsApi.getAll();
+
       setUnits(response.data.data.units);
     } catch (error) {
       console.error("Error fetching units:", error);
@@ -72,9 +71,11 @@ const Units = () => {
   // Filter units based on search
   const filteredUnits = units.filter(
     (unit) =>
-      (unit.customerName && unit.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (unit.customerName &&
+        unit.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (unit._id && unit._id.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (unit.title && unit.title.toLowerCase().includes(searchTerm.toLowerCase()))
+      (unit.title &&
+        unit.title.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // Calculate pagination
@@ -115,28 +116,6 @@ const Units = () => {
               <MdMenu />
             </button>
             <h1 className="units-page-title">Units</h1>
-          </div>
-
-          <div className="units-header-actions">
-            <button className="units-icon-btn" aria-label="Search">
-              <MdSearch />
-            </button>
-            <button className="units-icon-btn" aria-label="Settings">
-              <MdSettings />
-            </button>
-            <button
-              className="units-icon-btn units-notification-btn"
-              aria-label="Notifications"
-            >
-              <MdNotifications />
-              <span className="units-notification-dot"></span>
-            </button>
-            <div className="units-user-profile">
-              <div className="units-user-info">
-                <span className="units-user-name">Abram Schleifer</span>
-                <span className="units-user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -209,73 +188,80 @@ const Units = () => {
                   </thead>
                   <tbody>
                     {paginatedUnits.map((unit) => {
-                      const profit = (unit.saleAmount || 0) - (unit.purchaseAmount || 0) - (unit.expenses || 0) - (unit.taxAmount || 0);
+                      const profit =
+                        (unit.saleAmount || 0) -
+                        (unit.purchaseAmount || 0) -
+                        (unit.expenses || 0) -
+                        (unit.taxAmount || 0);
                       return (
-                      <tr
-                        key={unit._id}
-                        className="units-table-row"
-                        onClick={() => handleViewDetails(unit)}
-                      >
-                        <td className="units-table-cell units-unit-id">
-                          {unit.title}
-                        </td>
-                        <td className="units-table-cell units-vin-number">
-                          {unit.vinNumber}
-                        </td>
-                        <td className="units-table-cell units-contact-no">
-                          {unit.make}
-                        </td>
-                        <td className="units-table-cell">
-                          <div className="units-customer-info">
-                            {unit.customerName}
-                          </div>
-                        </td>
-                        <td className="units-table-cell units-investor">
-                          {unit.investors && unit.investors.length > 0 ? unit.investors.length : 0}
-                        </td>
-                        <td className="units-table-cell units-purchase">
-                          ${unit.purchaseAmount?.toLocaleString()}
-                        </td>
-                        <td className="units-table-cell units-expenses">
-                          ${unit.expenses?.toLocaleString()}
-                        </td>
-                        <td className="units-table-cell units-sale">
-                          ${unit.saleAmount?.toLocaleString()}
-                        </td>
-                        <td className="units-table-cell units-profit">
-                          ${profit.toLocaleString()}
-                        </td>
-                        <td className="units-table-cell">
-                          <span
-                            className={`units-status-badge ${
-                              unit.status === "in stock"
-                                ? "units-status-instock"
-                                : unit.status === "sold"
-                                ? "units-status-sold"
-                                : "units-status-default"
-                            }`}
-                          >
-                            {unit.status}
-                          </span>
-                        </td>
-                        <td className="units-table-cell units-actions">
-                          <button
-                            className="units-action-btn units-edit-btn"
-                            onClick={(e) => handleEdit(unit, e)}
-                          >
-                            <MdEdit />
-                            Edit
-                          </button>
-                          <button
-                            className="units-action-btn units-delete-btn"
-                            onClick={(e) => handleDelete(unit, e)}
-                          >
-                            <MdDelete />
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    )})}
+                        <tr
+                          key={unit._id}
+                          className="units-table-row"
+                          onClick={() => handleViewDetails(unit)}
+                        >
+                          <td className="units-table-cell units-unit-id">
+                            {unit.title}
+                          </td>
+                          <td className="units-table-cell units-vin-number">
+                            {unit.vinNumber}
+                          </td>
+                          <td className="units-table-cell units-contact-no">
+                            {unit.make}
+                          </td>
+                          <td className="units-table-cell">
+                            <div className="units-customer-info">
+                              {unit.customerName}
+                            </div>
+                          </td>
+                          <td className="units-table-cell units-investor">
+                            {unit.investors && unit.investors.length > 0
+                              ? unit.investors.length
+                              : 0}
+                          </td>
+                          <td className="units-table-cell units-purchase">
+                            {unit.purchaseAmount?.toLocaleString()}
+                          </td>
+                          <td className="units-table-cell units-expenses">
+                            {unit.expenses?.toLocaleString()}
+                          </td>
+                          <td className="units-table-cell units-sale">
+                            {unit.saleAmount?.toLocaleString()}
+                          </td>
+                          <td className="units-table-cell units-profit">
+                            {profit.toLocaleString()}
+                          </td>
+                          <td className="units-table-cell">
+                            <span
+                              className={`units-status-badge ${
+                                unit.status === "in stock"
+                                  ? "units-status-instock"
+                                  : unit.status === "sold"
+                                  ? "units-status-sold"
+                                  : "units-status-default"
+                              }`}
+                            >
+                              {unit.status}
+                            </span>
+                          </td>
+                          <td className="units-table-cell units-actions">
+                            <button
+                              className="units-action-btn units-edit-btn"
+                              onClick={(e) => handleEdit(unit, e)}
+                            >
+                              <MdEdit />
+                              Edit
+                            </button>
+                            <button
+                              className="units-action-btn units-delete-btn"
+                              onClick={(e) => handleDelete(unit, e)}
+                            >
+                              <MdDelete />
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -291,18 +277,23 @@ const Units = () => {
                   >
                     <div className="units-unit-image">
                       {/* Using a placeholder or first image if available */}
-                      <img src={unit.images && unit.images.length > 0 ? unit.images[0] : "https://placehold.co/600x400?text=No+Image"} alt={unit.title} />
+                      <img
+                        src={
+                          unit.images && unit.images.length > 0
+                            ? unit.images[0]
+                            : "https://placehold.co/600x400?text=No+Image"
+                        }
+                        alt={unit.title}
+                      />
                     </div>
                     <div className="units-unit-content">
                       <div className="units-unit-header-info">
                         <div>
-                          <h3 className="units-unit-name">
-                            {unit.title}
-                          </h3>
+                          <h3 className="units-unit-name">{unit.title}</h3>
                           <p className="units-unit-type">{unit.make}</p>
                         </div>
                         <div className="units-unit-price">
-                          ${unit.saleAmount?.toLocaleString()}
+                          {unit.saleAmount?.toLocaleString()}
                         </div>
                       </div>
                       <div className="units-unit-specs">
@@ -357,7 +348,9 @@ const Units = () => {
                   Prev
                 </button>
                 {/* Simplified pagination logic for now */}
-                <span style={{ margin: "0 10px" }}>Page {currentPage} of {totalPages}</span>
+                <span style={{ margin: "0 10px" }}>
+                  Page {currentPage} of {totalPages}
+                </span>
                 <button
                   className={`units-page-btn ${
                     currentPage === totalPages ? "units-page-disabled" : ""

@@ -1,13 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  MdDelete,
-  MdMenu,
-  MdNotifications,
-  MdSearch,
-  MdSettings,
-} from "react-icons/md";
+import { useEffect, useState } from "react";
+import { MdDelete, MdMenu } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { investorsApi } from "../services/api";
@@ -35,7 +29,8 @@ const EditInvestor = () => {
         setLoading(true);
         const response = await investorsApi.getOne(id);
         const data = response.data.data.investor;
-        const formatDate = (dateString) => dateString ? new Date(dateString).toISOString().split('T')[0] : "";
+        const formatDate = (dateString) =>
+          dateString ? new Date(dateString).toISOString().split("T")[0] : "";
 
         setFormData({
           investorId: data.investorId || "",
@@ -70,7 +65,7 @@ const EditInvestor = () => {
       const payload = {
         ...formData,
         initialInvestment: Number(formData.initialInvestment),
-        profitShare: Number(formData.profitShare)
+        profitShare: Number(formData.profitShare),
       };
       await investorsApi.update(id, payload);
       alert("Investor updated successfully!");
@@ -117,28 +112,6 @@ const EditInvestor = () => {
               <MdMenu />
             </button>
             <h1 className="editinvestor-page-title">Edit Investor</h1>
-          </div>
-
-          <div className="editinvestor-header-actions">
-            <button className="editinvestor-icon-btn" aria-label="Search">
-              <MdSearch />
-            </button>
-            <button className="editinvestor-icon-btn" aria-label="Settings">
-              <MdSettings />
-            </button>
-            <button
-              className="editinvestor-icon-btn editinvestor-notification-btn"
-              aria-label="Notifications"
-            >
-              <MdNotifications />
-              <span className="editinvestor-notification-dot"></span>
-            </button>
-            <div className="editinvestor-user-profile">
-              <div className="editinvestor-user-info">
-                <span className="editinvestor-user-name">Abram Schleifer</span>
-                <span className="editinvestor-user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </div>
 

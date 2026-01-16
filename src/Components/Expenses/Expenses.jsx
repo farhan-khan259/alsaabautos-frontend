@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import {
   MdAdd,
   MdCalendarToday,
+  MdDelete,
   MdDirectionsCar,
+  MdEdit,
   MdMenu,
-  MdNotifications,
   MdSearch,
-  MdSettings,
 } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import { expensesApi } from "../services/api";
 import "./Expenses.css";
@@ -18,6 +18,7 @@ const Expenses = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchExpenses();
@@ -47,9 +48,14 @@ const Expenses = () => {
     }
   };
 
-  const filteredExpenses = expenses.filter(expense => 
-    expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    expense.vehicleVin?.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleEdit = (id) => {
+    navigate(`/expenses/edit/${id}`);
+  };
+
+  const filteredExpenses = expenses.filter(
+    (expense) =>
+      expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expense.vehicleVin?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -71,26 +77,6 @@ const Expenses = () => {
               <MdMenu />
             </button>
             <h1 className="page-title">Expense Tracker</h1>
-          </div>
-
-          <div className="header-actions">
-            <button className="icon-btn">
-              <MdSearch />
-            </button>
-            <button className="icon-btn">
-              <MdSettings />
-            </button>
-            <button className="icon-btn notification-btn">
-              <MdNotifications />
-              <span className="notification-dot"></span>
-            </button>
-
-            <div className="user-profile">
-              <div className="user-info">
-                <span className="user-name">Abram Schleifer</span>
-                <span className="user-role">Admin</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -147,7 +133,9 @@ const Expenses = () => {
 
             <div className="table-container">
               {loading ? (
-                <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+                <div style={{ padding: "20px", textAlign: "center" }}>
+                  Loading...
+                </div>
               ) : (
                 <table className="pl-table">
                   <thead>
@@ -168,15 +156,25 @@ const Expenses = () => {
                         <td className="investor">{item.expenseType}</td>
                         <td>{item.description}</td>
                         <td className="net-profit">
-                          ${item.amount.toLocaleString()}
+                          {item.amount.toLocaleString()}
                         </td>
                         <td>
-                          <button 
-                            onClick={() => handleDelete(item._id)}
-                            style={{ color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}
-                          >
-                            Delete
-                          </button>
+                          <div className="expenses-action-buttons">
+                            <button
+                              className="expenses-action-btn expenses-edit-btn"
+                              onClick={() => handleEdit(item._id)}
+                              title="Edit expense"
+                            >
+                              <MdEdit />
+                            </button>
+                            <button
+                              className="expenses-action-btn expenses-delete-btn"
+                              onClick={() => handleDelete(item._id)}
+                              title="Delete expense"
+                            >
+                              <MdDelete />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
